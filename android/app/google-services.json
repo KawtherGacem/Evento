@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1010667364632",
+    "project_id": "evento-app-2022",
+    "storage_bucket": "evento-app-2022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010667364632:android:6db0b168f0ff7a77857e6d",
+        "android_client_info": {
+          "package_name": "com.eventoapp.evetoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1010667364632-6spt6bssqdci5vanc9gdoquat9otrhe4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eventoapp.evetoapp",
+            "certificate_hash": "2f4e7119fc7abd36da510b00716fd83e5182bf13"
+          }
+        },
+        {
+          "client_id": "1010667364632-0al4petjkbei0pfn1vvocsqjb6l2th99.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA41ujzSYvGdZONDPXknvYYLGpVMAeXrk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1010667364632-0al4petjkbei0pfn1vvocsqjb6l2th99.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
