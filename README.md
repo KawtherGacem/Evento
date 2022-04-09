@@ -1,4 +1,4 @@
-# evetoapp
+# eventoapp
 
 A new Flutter project.
 
