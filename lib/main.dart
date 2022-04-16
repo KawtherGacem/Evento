@@ -1,7 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'Login.dart';
+import 'package:provider/provider.dart';
+import 'googleLoginController.dart';
+import 'login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +17,27 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Login(),
+    return ScreenUtilInit(
+      designSize: Size(1080,2280),
+      builder: (context) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context)=> GoogleLoginController(),
+              child: Login(),
+            )
+          ],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+                textTheme:GoogleFonts.nunitoSansTextTheme(
+                  Theme.of(context).textTheme,
+                )
+            ),
+            home: const Login(),
+          ),
+        );
+      },
     );
   }
 }
