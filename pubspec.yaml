@@ -40,6 +40,7 @@ dependencies:
   provider: ^6.0.2
   lottie: ^1.2.2
   fluttertoast: ^8.0.9
+  convex_bottom_bar: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +71,6 @@ flutter:
      - images/background2.png
      - images/people.png
      - images/logo-evento.png
-     - images/logo2.png
      - images/signUpBackground.png
   #  - images/a_dot_ham.jpeg
 

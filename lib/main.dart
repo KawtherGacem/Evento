@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import "package:firebase_core/firebase_core.dart";
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'Login.dart';
@@ -9,7 +9,7 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+  /*class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -59,4 +59,61 @@ class _splashscreenState extends State<splashscreen> {
       ),
     );
   }
+}*/
+
+
+class MyApp extends StatelessWidget {
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: splashscreen(),
+    ) ;
+  }
 }
+class splashscreen extends StatefulWidget { //new class for splashscreen
+  const splashscreen({Key? key}) : super(key: key);
+
+  @override
+  _splashscreenState createState() => _splashscreenState();
+}
+
+class _splashscreenState extends State<splashscreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds:5), () { //her duration is 6s
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Login()));
+      //move it to dashboard screen
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body:
+      Center(
+        child: Container(
+          margin: EdgeInsets.all(10.0),
+          child: Column(
+
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              Lottie.asset('assets/logoanime.json'),
+            ],
+          ),
+        ),
+      ),
+
+    );
+
+
+  }
+}
+

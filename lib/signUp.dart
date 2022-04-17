@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -210,7 +211,7 @@ class _SignUpState extends State<SignUp> {
                         Container(
                           margin: EdgeInsets.only(top:20),
                           height: 120,
-                          child: Image.asset("images/logo-evento.png",
+                          child: Image.asset("images/logotwil.png",
                             fit: BoxFit.contain,),
                         ),
                         Container(
@@ -300,7 +301,7 @@ class _SignUpState extends State<SignUp> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => Dashboard()),
             (route) => false);
   }
 }
