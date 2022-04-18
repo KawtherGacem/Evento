@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,7 +48,7 @@ class _SignUpState extends State<SignUp> {
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
-          contentPadding: EdgeInsets.symmetric(vertical:15,horizontal: 15),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "First Name",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
@@ -178,7 +179,15 @@ class _SignUpState extends State<SignUp> {
           )),
     );
     return Scaffold(
+       // IconButton(
+       //    icon: Icon(Icons.arrow_back, color: Color(0xFF513ADA)),
+       //    onPressed: () {
+       //      // passing this to our root
+       //      Navigator.of(context).pop();
+       //    },
+       //  ),
       body: SingleChildScrollView(
+
             child: ConstrainedBox(
                constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height
@@ -186,63 +195,48 @@ class _SignUpState extends State<SignUp> {
             child: Container(
               decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/signUpBackground.png"),
+                    image: AssetImage("images/signUpBackground.png"),
                     fit: BoxFit.fill,
                   )
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  Container(
-                  margin: EdgeInsets.only(left:40,top: 40),
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back,size: 30 ,color: Color(0xFF513ADA)),
-                    onPressed: () {
-                      // passing this to our root
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                  Padding(
-                  padding: const EdgeInsets.only(right: 60.0,left: 60,bottom: 60),
-                  child: Form(
-                    key: _formKey,
-                    child: Center(
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top:0),
-                            height: 120,
-                            child: Image.asset("assets/logo-evento.png",
-                              fit: BoxFit.contain,),
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top:20),
-                              child: firstNameField),
-                          Container(
-                              margin: EdgeInsets.only(top:20),
-                              child: lastNameField),
-                          Container(
-                              margin: EdgeInsets.only(top:20),
-                              child: emailField),
-                          Container(
-                              margin: EdgeInsets.only(top:20),
-                              child: passwordField),
-                          Container(
-                              margin: EdgeInsets.only(top:20),
-                              child: confirmPasswordField),
-                          Container(
-                              margin: EdgeInsets.only(top:30),
-                              child: signUpButton),
+              child: Padding(
+                padding: const EdgeInsets.all(60.0),
+                child: Form(
+                  key: _formKey,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(top:20),
+                          height: 120,
+                          child: Image.asset("images/logotwil.png",
+                            fit: BoxFit.contain,),
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(top:20),
+                            child: firstNameField),
+                        Container(
+                            margin: EdgeInsets.only(top:20),
+                            child: lastNameField),
+                        Container(
+                            margin: EdgeInsets.only(top:20),
+                            child: emailField),
+                        Container(
+                            margin: EdgeInsets.only(top:20),
+                            child: passwordField),
+                        Container(
+                            margin: EdgeInsets.only(top:20),
+                            child: confirmPasswordField),
+                        Container(
+                            margin: EdgeInsets.only(top:30),
+                            child: signUpButton),
 
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
-                ]
               ),
             ),
           ),
@@ -307,7 +301,7 @@ class _SignUpState extends State<SignUp> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => Dashboard()),
             (route) => false);
   }
 }
