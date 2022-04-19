@@ -195,7 +195,7 @@ class _SignUpState extends State<SignUp> {
             child: Container(
               decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("images/signUpBackground.png"),
+                    image: AssetImage("assets/signUpBackground.png"),
                     fit: BoxFit.fill,
                   )
               ),
@@ -211,7 +211,7 @@ class _SignUpState extends State<SignUp> {
                         Container(
                           margin: EdgeInsets.only(top:20),
                           height: 120,
-                          child: Image.asset("images/logotwil.png",
+                          child: Image.asset("assets/logotwil.png",
                             fit: BoxFit.contain,),
                         ),
                         Container(

@@ -104,10 +104,10 @@ class splashscreen extends StatefulWidget { //new class for splashscreen
 
 class _splashscreenState extends State<splashscreen> {
   @override
-  void initState() {
-    Future.delayed(Duration(seconds:5), () { //her duration is 6s
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
+  initState() {
+    Future.delayed(Duration(seconds:8), () async { //her duration is 6s
+      await Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) =>  Login()));
       //move it to dashboard screen
     });
     // TODO: implement initState
@@ -122,7 +122,6 @@ class _splashscreenState extends State<splashscreen> {
         child: Container(
           margin: EdgeInsets.all(10.0),
           child: Column(
-
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
