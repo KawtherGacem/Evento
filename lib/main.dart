@@ -89,10 +89,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: splashscreen(),
-    ) ;
+    return ScreenUtilInit(
+      designSize: Size(1080,2280),
+      builder: (context) {
+        return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+                textTheme:GoogleFonts.nunitoSansTextTheme(
+                  Theme.of(context).textTheme,
+                )
+            ),
+            home: splashscreen(),
+        );
+      },
+    );
   }
 }
 class splashscreen extends StatefulWidget { //new class for splashscreen
@@ -105,10 +115,27 @@ class splashscreen extends StatefulWidget { //new class for splashscreen
 class _splashscreenState extends State<splashscreen> {
   @override
   initState() {
-    Future.delayed(Duration(seconds:8), () async { //her duration is 6s
-      await Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) =>  Login()));
-      //move it to dashboard screen
+    Future.delayed(Duration(seconds:8), () { //her duration is 6s
+       Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) {
+          return MultiProvider(
+             providers: [
+               ChangeNotifierProvider(
+                 create: (context)=> GoogleLoginController(),
+                 child: Login(),
+               )
+             ],
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                textTheme:GoogleFonts.nunitoSansTextTheme(
+                 Theme.of(context).textTheme,
+                )
+               ),
+               home: Login(),
+                  ),
+             );}
+          ));//move it to dashboard screen
     });
     // TODO: implement initState
     super.initState();
