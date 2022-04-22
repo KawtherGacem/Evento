@@ -37,6 +37,13 @@
             {
               "client_id": "1010667364632-0al4petjkbei0pfn1vvocsqjb6l2th99.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1010667364632-5infcrlrtk6lfno7ugvb4thf95vfpa7g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.eventoapp.evetoapp"
+              }
             }
           ]
         }
