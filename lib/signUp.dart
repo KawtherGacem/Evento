@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'homePage.dart';
-import 'models/user.dart';
+import 'models/users/User.dart';
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
 
@@ -301,7 +301,7 @@ class _SignUpState extends State<SignUp> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => Dashboard()),
+        MaterialPageRoute(builder: (context) => Dashboard(user: user!,)),
             (route) => false);
   }
 }

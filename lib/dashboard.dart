@@ -1,23 +1,69 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:evetoapp/homePage.dart';
+import 'package:evetoapp/models/users/User.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'controllers/loginController.dart';
+import 'login.dart';
 
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+  const Dashboard({Key? key, required User user})
+      : _user = user,
+        super(key: key);
+
+  final User _user;
 
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+
+  late User _user;
+  bool _isSigningOut = false;
+
   int selectedIndex = 0;
+  Route _routeToLogin(BuildContext context) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => Login(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    _user = widget._user;
+
+    super.initState();
+  }
   List<Widget> listWidgets = [
-    Dashboard(),
+    HomePage(),
+    HomePage(),
+    HomePage(),
+
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: listWidgets[selectedIndex],
+      body:Column( children:[
+        loggedInUser(),
+        listWidgets[selectedIndex]]),
+
       bottomNavigationBar: ConvexAppBar.badge(
         {},
         items: [
@@ -26,8 +72,10 @@ class _DashboardState extends State<Dashboard> {
           TabItem(icon: Icons.favorite, title: 'Fav'),
         ],
         onTap: onItemTapped,
-        backgroundColor: Colors.deepPurple,
-      ),
+        activeColor:Color(0xFF513ADA) ,
+        color: Color(0xFF513ADA),
+        backgroundColor: Color(0xFFFFFFFF),
+      )
     );
   }
 
@@ -35,5 +83,37 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       selectedIndex = index;
     });
+  }
+
+
+  Widget loggedInUser() {
+    return SizedBox(
+      height: 300,
+      child: Row(
+        children: [
+        CircleAvatar(
+          backgroundImage: Image.network(_user.photoURL ?? "").image,
+        ),
+        Text(_user.displayName ?? ""),
+          ActionChip(
+            avatar: Icon(Icons.logout),
+            label: Text("logout"),
+            onPressed: () async {
+              setState(() {
+              _isSigningOut = true;
+              });
+              await LoginController.signOut(context: context);
+              setState(() {
+              _isSigningOut = false;
+              });
+              // Navigator.of(context)
+              //     .pushReplacement(
+              //     MaterialPageRoute(builder: (context) => const Login()),
+              // );
+             },
+            ),
+      ],
+      ),
+    );
   }
 }

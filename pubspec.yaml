@@ -44,6 +44,8 @@ dependencies:
   google_fonts: ^2.3.1
   flutter_screenutil: ^5.4.0
   google_sign_in: ^5.3.0
+  flutter_facebook_auth: ^4.3.0
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,8 @@ flutter:
      - assets/logo-evento.png
      - assets/signUpBackground.png
      - assets/logotwil.png
+     - assets/facebook.png
+     - assets/google.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

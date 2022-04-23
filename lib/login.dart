@@ -7,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-import 'googleLoginController.dart';
+import 'controllers/loginController.dart';
+import 'dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -37,10 +39,14 @@ class _LoginState extends State<Login> {
       // validator: ,
       cursorColor: Color(0xFF513ADA),
       onSaved: (value){
-        emailController.text = value!;
+        if (value != null) {
+          emailController.text = value;
+        }
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white54,
           prefixIcon: Icon(Icons.mail,color: Color(0xFF513ADA)),
           contentPadding: EdgeInsets.symmetric(horizontal:20.w,vertical:30.h),
           hintText: "Email",
@@ -61,10 +67,15 @@ class _LoginState extends State<Login> {
       cursorColor: Color(0xFF513ADA),
 
       onSaved: (value){
-        passwordController.text = value!;
+        if (value != null) {
+          passwordController.text = value;
+        }
       },
       textInputAction: TextInputAction.done,
       decoration: InputDecoration(
+        labelStyle: TextStyle(fontSize: 50.sp),
+        filled: true,
+          fillColor: Colors.white54,
           prefixIcon: Icon(Icons.vpn_key_rounded,color: Color(0xFF513ADA)),
           contentPadding: EdgeInsets.symmetric(horizontal:20.w,vertical:30.h),
           hintText: "Password",
@@ -94,143 +105,148 @@ class _LoginState extends State<Login> {
       ),
     );
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context)=> GoogleLoginController(),
-          child: Login(),
-        )
-      ],
-      child: ScreenUtilInit(
+    return ScreenUtilInit(
           designSize: const Size(1080,2280),
           builder: (context) {
-          return Scaffold(
-            body: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height
-                ),
-                child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/background2.png"),
-                        fit: BoxFit.fill,
-                      )
+            return Scaffold(
+              body: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: MediaQuery
+                          .of(context)
+                          .size
+                          .height
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 150.w),
-                          child: Form(
-                            key: _formKey,
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(top: 150.h),
-                                    height: 550.h,
-                                    child: Image.asset("assets/logo-evento.png",
-                                      fit: BoxFit.contain,),
-                                  ),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 100.h),
-                                      child: emailField),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 70.h),
-                                      child: passwordField),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 70.h),
-                                      child: loginButton),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 30.h),
-                                    child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text("Don't have an account? ",
-                                          style: TextStyle(
-                                              fontSize: 40.sp
-                                          ),),
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          SignUp()));
-                                            },
-                                            child: Text(
-                                              "SignUp",
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/background2.png"),
+                          fit: BoxFit.fill,
+                        )
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 150.w),
+                            child: Form(
+                              key: _formKey,
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 150.h),
+                                      height: 550.h,
+                                      child: Image.asset(
+                                        "assets/logo-evento.png",
+                                        fit: BoxFit.contain,),
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 100.h),
+                                        child: emailField),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 70.h),
+                                        child: passwordField),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 70.h),
+                                        child: loginButton),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 30.h),
+                                      child: Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          children: <Widget>[
+                                            Text("Don't have an account? ",
                                               style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 40.sp),
-                                            ),
-                                          )
-                                        ]),
-                                  ),
-                                ],
+                                                  fontSize: 40.sp
+                                              ),),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SignUp()));
+                                              },
+                                              child: Text(
+                                                "SignUp",
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 40.sp),
+                                              ),
+                                            )
+                                          ]),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 370.h, left: 150.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text(
-                                "Or continue with",
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 40.sp),
+                        Container(
+                          margin: EdgeInsets.only(top: 370.h, left: 150.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                child: Text(
+                                  "Or continue with",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 40.sp),
+                                ),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 40.h),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3.h),
-                                    height: 170.h,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(50)
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: 40.h),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3.h),
+                                      height: 170.h,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              50)
+                                      ),
+                                      child: GestureDetector(
+                                        child: Image.asset("assets/google.png",
+                                          fit: BoxFit.contain,),
+                                        onTap: () {
+                                          LoginController.signInWithGoogle(context: context);
+                                        },
+                                      ),
                                     ),
-                                    child: Image.asset("assets/google.png",
-                                      fit: BoxFit.contain,),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 40.h),
-                                    padding: EdgeInsets.all(3.h),
-                                    height: 170.h,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(50)
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 40.h),
+                                      padding: EdgeInsets.all(3.h),
+                                      height: 170.h,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              50)
+                                      ),
+                                      child: Image.asset("assets/facebook.png",
+                                        fit: BoxFit.contain,),
                                     ),
-                                    child: Image.asset("assets/facebook.png",
-                                      fit: BoxFit.contain,),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }),
-    );
+            );
+          });
   }
   void login(String email, String password) async {
     if (_formKey.currentState!.validate()) {
@@ -238,9 +254,10 @@ class _LoginState extends State<Login> {
         await _auth
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
+
           Fluttertoast.showToast(msg: "Login Successful"),
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => HomePage())),
+              MaterialPageRoute(builder: (context) => Dashboard(user: _auth.currentUser!,))),
         });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
@@ -271,24 +288,6 @@ class _LoginState extends State<Login> {
       }
     }
   }
-
-  LoginGoogle(){
-    return Consumer<GoogleLoginController>(
-      builder: (context,model,child){
-        if(model.googleAccount!=null){
-          return Center(child:LoggedinUi(model),);
-        }
-        else{
-          return LoginControlls(context);
-        }
-      },
-    );
-
-    }
-
-  LoggedinUi(GoogleLoginController model) {}
-
-  LoginControlls(BuildContext context) {}
 
 
 }

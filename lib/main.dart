@@ -1,10 +1,11 @@
+import 'package:evetoapp/controllers/loginController.dart';
+import 'package:evetoapp/dashboard.dart';
 import "package:firebase_core/firebase_core.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'googleLoginController.dart';
 import 'login.dart';
 
 Future<void> main() async {
@@ -115,26 +116,33 @@ class splashscreen extends StatefulWidget { //new class for splashscreen
 class _splashscreenState extends State<splashscreen> {
   @override
   initState() {
-    Future.delayed(Duration(seconds:8), () { //her duration is 6s
+    Future.delayed(Duration(seconds:4), () { //her duration is 6s
        Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) {
-          return MultiProvider(
-             providers: [
-               ChangeNotifierProvider(
-                 create: (context)=> GoogleLoginController(),
-                 child: Login(),
-               )
-             ],
-              child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                textTheme:GoogleFonts.nunitoSansTextTheme(
-                 Theme.of(context).textTheme,
-                )
-               ),
-               home: Login(),
-                  ),
-             );}
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+            textTheme:GoogleFonts.nunitoSansTextTheme(
+             Theme.of(context).textTheme,
+            )
+           ),
+           home: Login(),
+            // FutureBuilder(
+           //   future: LoginController.initializeFirebase(context: context),
+           //   builder: (context, snapshot) {
+           //     if (snapshot.hasError) {
+           //       return Text('Error initializing Firebase');
+           //     } else if (snapshot.connectionState == ConnectionState.done) {
+           //       return Login();
+           //     }
+           //     return CircularProgressIndicator(
+           //       valueColor: AlwaysStoppedAnimation<Color>(
+           //         Color(0xFF513ADA),
+           //       ),
+           //     );
+           //   },
+           // ),
+              );}
           ));//move it to dashboard screen
     });
     // TODO: implement initState
