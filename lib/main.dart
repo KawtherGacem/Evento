@@ -116,7 +116,7 @@ class splashscreen extends StatefulWidget { //new class for splashscreen
 class _splashscreenState extends State<splashscreen> {
   @override
   initState() {
-    Future.delayed(Duration(seconds:4), () { //her duration is 6s
+    Future.delayed(Duration(seconds:5), () { //her duration is 6s
        Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) {
           return MaterialApp(

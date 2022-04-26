@@ -38,21 +38,40 @@ class _DashboardState extends State<Dashboard> {
     HomePage(),
     HomePage(),
     HomePage(),
-
+    HomePage(),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Column( children:[
-        loggedInUser(),
-        listWidgets[selectedIndex]]),
+        body:Column( children:[
+          loggedInUser(),
+          listWidgets[selectedIndex]]),
+        appBar: AppBar(
+      backgroundColor: Colors.white,
+      title: Image.asset("assets/logotwil.png",
+        height: 90.0,
+        width: 100.0,),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.notifications_active_outlined,
+            color: Color(0xFF513ADA),
+          ), onPressed: () {  },
+        ),
+        CircleAvatar(
+          backgroundImage: AssetImage("assets/avatar.JPG"),
+          radius: 15,
+        ),
+      ],
 
-      bottomNavigationBar: ConvexAppBar.badge(
+    ),
+        bottomNavigationBar: ConvexAppBar.badge(
         {},
         items: [
-          TabItem(icon: Icons.home, title: 'Home'),
-          TabItem(icon: Icons.add, title: 'Add'),
+          TabItem(icon: Icons.home, title: 'Acceuil'),
+          TabItem(icon: Icons.add, title: 'Ajouter'),
           TabItem(icon: Icons.favorite, title: 'Fav'),
+          TabItem(icon: Icons.logout, title: 'déconnecter'),
         ],
         onTap: onItemTapped,
         activeColor:Color(0xFF513ADA) ,
@@ -67,17 +86,15 @@ class _DashboardState extends State<Dashboard> {
       selectedIndex = index;
     });
   }
-
-
   Widget loggedInUser() {
     return SizedBox(
       height: 300,
       child: Row(
         children: [
-        CircleAvatar(
-          backgroundImage: Image.network(_user.photoURL ?? "").image,
-        ),
-        Text(_user.displayName ?? ""),
+          CircleAvatar(
+            backgroundImage: Image.network(_user.photoURL ?? "").image,
+          ),
+          Text(_user.displayName ?? ""),
           ActionChip(
             avatar: Icon(Icons.logout),
             label: Text("logout"),
@@ -93,11 +110,13 @@ class _DashboardState extends State<Dashboard> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          const Login()));
+                      const Login()));
             },
-            ),
-      ],
+          ),
+        ],
       ),
     );
   }
+
+
 }
