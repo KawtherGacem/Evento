@@ -126,22 +126,23 @@ class _splashscreenState extends State<splashscreen> {
              Theme.of(context).textTheme,
             )
            ),
-           home: Login(),
-            // FutureBuilder(
-           //   future: LoginController.initializeFirebase(context: context),
-           //   builder: (context, snapshot) {
-           //     if (snapshot.hasError) {
-           //       return Text('Error initializing Firebase');
-           //     } else if (snapshot.connectionState == ConnectionState.done) {
-           //       return Login();
-           //     }
-           //     return CircularProgressIndicator(
-           //       valueColor: AlwaysStoppedAnimation<Color>(
-           //         Color(0xFF513ADA),
-           //       ),
-           //     );
-           //   },
-           // ),
+           home:
+           // const Login(),
+            FutureBuilder(
+             future: LoginController.initializeFirebase(context: context),
+             builder: (context, snapshot) {
+               if (snapshot.hasError) {
+                 return Text('Error initializing Firebase');
+               } else if (snapshot.connectionState == ConnectionState.done) {
+                 return Container();
+               }
+               return CircularProgressIndicator(
+                 valueColor: AlwaysStoppedAnimation<Color>(
+                   Color(0xFF513ADA),
+                 ),
+               );
+             },
+           ),
               );}
           ));//move it to dashboard screen
     });

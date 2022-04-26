@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'controllers/loginController.dart';
 import 'login.dart';
+import 'main.dart';
 
 
 class Dashboard extends StatefulWidget {
@@ -26,24 +27,6 @@ class _DashboardState extends State<Dashboard> {
   bool _isSigningOut = false;
 
   int selectedIndex = 0;
-  Route _routeToLogin(BuildContext context) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => Login(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -99,18 +82,19 @@ class _DashboardState extends State<Dashboard> {
             avatar: Icon(Icons.logout),
             label: Text("logout"),
             onPressed: () async {
-              setState(() {
-              _isSigningOut = true;
-              });
+              // setState(() {
+              // _isSigningOut = true;
+              // });
               await LoginController.signOut(context: context);
-              setState(() {
-              _isSigningOut = false;
-              });
-              // Navigator.of(context)
-              //     .pushReplacement(
-              //     MaterialPageRoute(builder: (context) => const Login()),
-              // );
-             },
+              // setState(() {
+              // _isSigningOut = false;
+              // });
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const Login()));
+            },
             ),
       ],
       ),

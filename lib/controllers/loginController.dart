@@ -48,12 +48,8 @@ class LoginController with ChangeNotifier{
         Fluttertoast.showToast(msg: e.toString());
       }    }
     if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => Dashboard(
-            user: user!,
-          ),
-        ),
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => Dashboard(user: user!)),
       );
     }
     return user;
@@ -63,18 +59,14 @@ class LoginController with ChangeNotifier{
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
-      if (!kIsWeb) {
+
         await googleSignIn.signOut();
-      }
+
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error signing out. Try again.');
 
     }
-    Navigator.of(context)
-        .pushReplacement(
-      MaterialPageRoute(builder: (context) => const Login()),
-    );
   }
   static Future<FirebaseApp> initializeFirebase({
     required BuildContext context,
@@ -88,6 +80,13 @@ class LoginController with ChangeNotifier{
         MaterialPageRoute(
           builder: (context) => Dashboard(
             user: user,
+          ),
+        ),
+      );
+    }else{
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => Login(
           ),
         ),
       );
