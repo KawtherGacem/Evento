@@ -14,7 +14,6 @@ class _HomePageState extends State<HomePage>  {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
       color: Colors.white,
     );
     // TODO: implement build

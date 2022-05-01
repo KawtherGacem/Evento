@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evetoapp/models/users/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../dashboard.dart';
@@ -47,6 +49,37 @@ class LoginController with ChangeNotifier{
       } catch (e) {
         Fluttertoast.showToast(msg: e.toString());
       }    }
+    // puting data in firestore db
+
+    UserModel userModel = UserModel();
+    userModel.email = user?.email;
+    userModel.uid = user?.uid;
+    userModel.fullName = user?.displayName;
+    userModel.userName = user?.displayName;
+    userModel.photoURL =user?.photoURL;
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user?.uid)
+        .set(
+        {"uid" : user?.uid,
+          "fullName" : user?.displayName,
+          "userName" : user?.displayName,
+          "email":user?.email,
+          "photo":user?.photoURL,
+          "category" : ["computer science","biology","art"]
+        }).then((_) {
+      print(user?.uid);
+      firebaseFirestore
+          .collection("users")
+          .doc(user?.uid)
+          .collection("likedEvents")
+          .add({"eventID": "true"});
+    });
+
+
     if (user != null) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => Dashboard(user: user!)),
@@ -78,9 +111,15 @@ class LoginController with ChangeNotifier{
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => Dashboard(
-            user: user,
+          builder: (context) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+              textTheme:GoogleFonts.nunitoSansTextTheme(
+                Theme.of(context).textTheme,
+              )
           ),
+          home: Dashboard(user: user,),
+        )
         ),
       );
     }else{

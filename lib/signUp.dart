@@ -3,6 +3,7 @@ import 'package:evetoapp/dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'homePage.dart';
 import 'models/users/User.dart';
@@ -19,23 +20,23 @@ class _SignUpState extends State<SignUp> {
   String? errorMessage;
 
 
-  final firstNameEditingController = new TextEditingController();
-  final lastNameEditingController = new TextEditingController();
+  final fullNameEditingController = new TextEditingController();
+  final userNameEditingController = new TextEditingController();
   final emailEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
   final confirmPasswordEditingController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    //first name field
-    final firstNameField = TextFormField(
+    //full name field
+    final fullNameField = TextFormField(
         autofocus: false,
-        controller: firstNameEditingController,
+        controller: fullNameEditingController,
         keyboardType: TextInputType.name,
         validator: (value) {
           RegExp regex = new RegExp(r'^.{3,}$');
           if (value!.isEmpty) {
-            return ("First Name cannot be Empty");
+            return ("Full Name cannot be Empty");
           }
           if (!regex.hasMatch(value)) {
             return ("Enter Valid name(Min. 3 Character)");
@@ -43,37 +44,37 @@ class _SignUpState extends State<SignUp> {
           return null;
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          fullNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "First Name",
+          hintText: "Full Name",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ));
 
-    //last name field
-    final lastNameField = TextFormField(
+    //username field
+    final userNameField = TextFormField(
         autofocus: false,
-        controller: lastNameEditingController,
+        controller: userNameEditingController,
         keyboardType: TextInputType.name,
         validator: (value) {
           if (value!.isEmpty) {
-            return ("Last Name cannot be Empty");
+            return ("Username cannot be Empty");
           }
           return null;
         },
         onSaved: (value) {
-          lastNameEditingController.text = value!;
+          userNameEditingController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Second Name",
+          hintText: "Username",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -216,10 +217,10 @@ class _SignUpState extends State<SignUp> {
                         ),
                         Container(
                             margin: EdgeInsets.only(top:20),
-                            child: firstNameField),
+                            child: fullNameField),
                         Container(
                             margin: EdgeInsets.only(top:20),
-                            child: lastNameField),
+                            child: userNameField),
                         Container(
                             margin: EdgeInsets.only(top:20),
                             child: emailField),
@@ -243,6 +244,7 @@ class _SignUpState extends State<SignUp> {
         ),
     );
   }
+
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -290,13 +292,27 @@ class _SignUpState extends State<SignUp> {
     // writing all the values
     userModel.email = user?.email;
     userModel.uid = user?.uid;
-    userModel.firstName = firstNameEditingController.text;
-    userModel.lastName = lastNameEditingController.text;
+    userModel.fullName = fullNameEditingController.text;
+    userModel.userName = userNameEditingController.text;
 
     await firebaseFirestore
         .collection("users")
         .doc(user?.uid)
-        .set(userModel.toMap());
+        .set(
+        {"uid" : user?.uid,
+        "fullName" : fullNameEditingController.text,
+        "userName" : userNameEditingController.text,
+        "email":user?.email,
+        "photo":user?.photoURL,
+        "category" : ["computer science","biology","art"]
+        }).then((_) {
+          print(user?.uid);
+          firebaseFirestore
+              .collection("users")
+              .doc(user?.uid)
+              .collection("likedEvents")
+              .add({"eventID": "true"});
+        });
     Fluttertoast.showToast(msg: "Account created successfully :) ");
 
     Navigator.pushAndRemoveUntil(

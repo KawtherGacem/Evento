@@ -1,4 +1,5 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/homePage.dart';
 import 'package:evetoapp/models/users/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,7 +37,7 @@ class _DashboardState extends State<Dashboard> {
   }
   List<Widget> listWidgets = [
     HomePage(),
-    HomePage(),
+    addEvent(),
     HomePage(),
     HomePage(),
   ];
@@ -44,25 +45,31 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         body:Column( children:[
-          loggedInUser(),
+          // loggedInUser(),
           listWidgets[selectedIndex]]),
         appBar: AppBar(
-      backgroundColor: Colors.white,
-      title: Image.asset("assets/logotwil.png",
-        height: 90.0,
-        width: 100.0,),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.notifications_active_outlined,
-            color: Color(0xFF513ADA),
-          ), onPressed: () {  },
-        ),
-        CircleAvatar(
-          backgroundImage: AssetImage("assets/avatar.JPG"),
-          radius: 15,
-        ),
-      ],
+          leadingWidth: 200,
+          leading: Container(
+            margin: EdgeInsets.only(left: 10),
+            child: Image.asset("assets/logotwil.png"),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          // title: ,
+          //   ,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.notifications_active_outlined,
+                color: Color(0xFF513ADA),
+              ), onPressed: () {  },
+            ),
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: Image.network(_user.photoURL ?? "").image,
+
+            ),
+          ],
 
     ),
         bottomNavigationBar: ConvexAppBar.badge(
@@ -88,7 +95,7 @@ class _DashboardState extends State<Dashboard> {
   }
   Widget loggedInUser() {
     return SizedBox(
-      height: 300,
+      height: 100,
       child: Row(
         children: [
           CircleAvatar(
