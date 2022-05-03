@@ -3,7 +3,9 @@ class Event {
   String? title;
   String? description;
   String? uid;
-  // String? date;
+
+  Event(this.id, this.title, this.description, this.uid);
+// String? date;
   // String? time;
   // String? address;
   // String? photo;

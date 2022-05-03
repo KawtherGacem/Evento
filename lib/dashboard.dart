@@ -44,34 +44,32 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:Column( children:[
-          // loggedInUser(),
-          listWidgets[selectedIndex]]),
-        appBar: AppBar(
-          leadingWidth: 200,
-          leading: Container(
-            margin: EdgeInsets.only(left: 10),
-            child: Image.asset("assets/logotwil.png"),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          // title: ,
-          //   ,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.notifications_active_outlined,
-                color: Color(0xFF513ADA),
-              ), onPressed: () {  },
-            ),
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: Image.network(_user.photoURL ?? "").image,
-
-            ),
-          ],
-
-    ),
+        body:listWidgets[selectedIndex],
+    //     appBar: AppBar(
+    //       leadingWidth: 200,
+    //       leading: Container(
+    //         margin: EdgeInsets.only(left: 10),
+    //         child: Image.asset("assets/logotwil.png"),
+    //       ),
+    //       elevation: 0,
+    //       backgroundColor: Colors.white,
+    //       // title: ,
+    //       //   ,
+    //       actions: <Widget>[
+    //         IconButton(
+    //           icon: Icon(
+    //             Icons.notifications_active_outlined,
+    //             color: Color(0xFF513ADA),
+    //           ), onPressed: () {  },
+    //         ),
+    //         CircleAvatar(
+    //           radius: 20,
+    //           backgroundImage: Image.network(_user.photoURL ?? "").image,
+    //
+    //         ),
+    //       ],
+    //
+    // ),
         bottomNavigationBar: ConvexAppBar.badge(
         {},
         items: [

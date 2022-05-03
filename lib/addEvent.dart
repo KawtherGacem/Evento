@@ -30,68 +30,67 @@ class _addEventState extends State<addEvent> {
   }
 
   var controller = Get.put(SelectedListController());
+  final titleField= TextFormField(
+    autofocus: false,
+    controller: titleController,
+    keyboardType: TextInputType.text,
+    // validator: ,
+    cursorColor: const Color(0xFF513ADA),
+    onSaved: (value){
+      if (value != null) {
+        titleController.text = value;
+      }
+    },
+    textInputAction: TextInputAction.next,
+    decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white54,
+        hintText: "Event title",
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xFF513ADA)),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+        )
+    ),
+  );
+
+  final descriptionField= TextField(
+
+    autofocus: false,
+    controller: descriptionController,
+    keyboardType: TextInputType.multiline,
+    minLines: 4,
+    maxLines: null,
+    // validator: ,
+    cursorColor: const Color(0xFF513ADA),
+    onSubmitted: (value){
+      if (value != null) {
+        descriptionController.text = value;
+      }
+    },
+    textInputAction: TextInputAction.next,
+    decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white54,
+        hintText: "Event title",
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xFF513ADA)),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+        )
+    ),
+  );
+
 
   @override
   Widget build(BuildContext context) {
 
-
-   final titleField= TextFormField(
-      autofocus: false,
-      controller: titleController,
-      keyboardType: TextInputType.text,
-      // validator: ,
-      cursorColor: const Color(0xFF513ADA),
-      onSaved: (value){
-        if (value != null) {
-          titleController.text = value;
-        }
-      },
-      textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white54,
-          hintText: "Event title",
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: const BorderSide(color: Color(0xFF513ADA)),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          )
-      ),
-    );
-
-   final descriptionField= TextField(
-
-     autofocus: false,
-     controller: descriptionController,
-     keyboardType: TextInputType.multiline,
-     minLines: 4,
-     maxLines: null,
-     // validator: ,
-     cursorColor: const Color(0xFF513ADA),
-     onSubmitted: (value){
-       if (value != null) {
-         descriptionController.text = value;
-       }
-     },
-     textInputAction: TextInputAction.next,
-     decoration: InputDecoration(
-         filled: true,
-         fillColor: Colors.white54,
-         hintText: "Event title",
-         focusedBorder: OutlineInputBorder(
-           borderRadius: BorderRadius.circular(30),
-           borderSide: const BorderSide(color: Color(0xFF513ADA)),
-         ),
-         border: OutlineInputBorder(
-           borderRadius: BorderRadius.circular(30),
-         )
-     ),
-   );
     List<String> categoryList = ["computer science","biology","art","music",
       "medicine","electronics"];
-
 
    void openFilterDialog(BuildContext context) async {
      await FilterListDialog.display<String>(
@@ -119,31 +118,55 @@ class _addEventState extends State<addEvent> {
    return Container(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(
+                height: 40,
+              ),
               titleField,
               Container(
                   child: descriptionField),
-              Obx(()=> controller.selectedList.value.length==0 ? Text("no category selected")
-                  :Wrap(
-                children:
-                  controller.selectedList.map((String e) =>
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Chip(
-                        label: Text(e),
-                      ),
-                    )).toList()
 
-              )),
-              FloatingActionButton(
+              Row(
+                children: [
+                  Column(
+                  children: [
+                    Obx(()=> controller.selectedList.value.length==0 ? Text("no category selected")
+                        :Wrap(
+                      children:
+                        controller.selectedList.map((String e) =>
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Chip(
+                              label: Text(e),
+                            ),
+                          )).toList()
 
-                onPressed: () { openFilterDialog(context); },
-                child: Icon(Icons.add),
+                    )),
+                  ],
+                ),SizedBox(
+                  width: 20,
+                ),
+                  Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color(0xFF513ADA),
+                    child: MaterialButton(
+                      minWidth: 20,
+                      onPressed: (){
+                        openFilterDialog(context);
+
+                      },
+                      child: Icon(Icons.add,color: Colors.white,),
+                    ),
+                  )
+
+                ]
               ),
+
               SizedBox(
                 height: 50,
               ),
@@ -154,7 +177,7 @@ class _addEventState extends State<addEvent> {
                 child: MaterialButton(
                   minWidth: MediaQuery.of(context).size.width,
                   onPressed: (){
-                      eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser?.uid);
+                      eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser);
                       Fluttertoast.showToast(msg: "Event added");
 
                   },
