@@ -6,7 +6,7 @@ class addEventController {
 
   final firestoreInstance = FirebaseFirestore.instance;
 
-   void addNewEvent(String title,String description,List<String> list,User? user) {
+   void addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl) {
     firestoreInstance.collection("events").add(
         {
           "title" : title,
@@ -14,6 +14,7 @@ class addEventController {
           "uid" : user?.uid,
           "organizerName":user?.displayName,
           "organizerPhoto":user?.photoURL,
+          "photoUrl":downLoadUrl,
           "category" : list
         }).then((value){
       print(value.id);

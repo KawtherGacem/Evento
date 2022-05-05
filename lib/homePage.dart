@@ -68,21 +68,31 @@ class _HomePageState extends State<HomePage>  {
                           return ListView.builder(
                               itemCount: snapshot.data?.length,
                               itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(snapshot.data[index].data()["title"]),
-                                  onTap: (){
-                                    Get.to(EventPage(event: snapshot.data[index]));
-                                  },
+                                return Card(
+                                  child: GestureDetector(
+                                      child: Container(
+                                          child: Column(
+                                            children: [
+                                              // Image(image: Image.network(snapshot.data[index].data()["photoUrl"]).image),
+                                              Text(snapshot.data[index].data()["title"],),
+                                            ],
+                                          )),
+                                      onTap: (){
+                                          Get.to(EventPage(event: snapshot.data[index]));
+                                        },
+                                      ),
                                 );
-
                           });
-                        } else if (snapshot.hasError) {
+                        } else
+                          if (snapshot.hasError) {
                           return Text('${snapshot.error}');
                         }
                         // By default, show a loading spinner.
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 50,horizontal: 25),
-                            child: CircularProgressIndicator());
+                        return Center(
+                          heightFactor: 50,
+                            widthFactor: 50,
+                            child: CircularProgressIndicator(semanticsLabel: "Loading events...",
+                              strokeWidth: 2,color: Colors.black,));
                       },
                     ),
                     // child: ListView.builder(

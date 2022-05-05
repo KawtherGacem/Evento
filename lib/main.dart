@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(1080,2280),
-      builder: (context) {
+      builder: (_) {
         return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(

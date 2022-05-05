@@ -86,11 +86,20 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  void onItemTapped(int index) {
-    setState(() {
+  void onItemTapped(int index) async{
+
       selectedIndex = index;
-    });
-  }
+      if (index==3){
+        await LoginController.signOut(context: context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                const Login()));
+      }
+
+    setState(() { });
+}
   Widget loggedInUser() {
     return SizedBox(
       height: 100,
