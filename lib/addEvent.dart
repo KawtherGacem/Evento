@@ -34,6 +34,8 @@ class _addEventState extends State<addEvent> {
   @override
   void initState() {
     controller.selectedList=List<String>.empty(growable: true).obs;
+    titleController.clear();
+    descriptionController.clear();
     super.initState();
   }
 
@@ -148,17 +150,7 @@ class _addEventState extends State<addEvent> {
           }
         });
       });
-      // setState((){
-      //   DownLoadUrl = DUrl ;
-      //  });
-      // String fileName = basename(_image.path);
-      // FirebaseStorage storage = FirebaseStorage.instance;
-      // Reference firebaseStorageRef = storage.ref()
-      //     .child("images/");
-      // UploadTask uploadTask = firebaseStorageRef.putFile(File(_image.path));
-      // uploadTask.then((res) {
-      //   return res.ref.getDownloadURL();
-      // });
+
     }
 
       return Scaffold(

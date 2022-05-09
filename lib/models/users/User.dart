@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 class UserModel {
   String? uid;
@@ -6,7 +5,7 @@ class UserModel {
   String? fullName;
   String? userName;
   String? photoURL;
-  Array? category;
+  List<String>? category;
 
 
   UserModel({this.uid, this.email, this.fullName, this.userName,this.photoURL});

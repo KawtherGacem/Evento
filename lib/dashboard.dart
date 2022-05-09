@@ -25,7 +25,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
 
   late User _user;
-  bool _isSigningOut = false;
 
   int selectedIndex = 0;
 
@@ -39,12 +38,14 @@ class _DashboardState extends State<Dashboard> {
     HomePage(),
     addEvent(),
     HomePage(),
-    HomePage(),
+    // HomePage(),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:listWidgets[selectedIndex],
+        body: Center(child: listWidgets[selectedIndex]),
+
+
     //     appBar: AppBar(
     //       leadingWidth: 200,
     //       leading: Container(
@@ -76,7 +77,7 @@ class _DashboardState extends State<Dashboard> {
           TabItem(icon: Icons.home, title: 'Acceuil'),
           TabItem(icon: Icons.add, title: 'Ajouter'),
           TabItem(icon: Icons.favorite, title: 'Fav'),
-          TabItem(icon: Icons.logout, title: 'déconnecter'),
+          // TabItem(icon: Icons.logout, title: 'déconnecter'),
         ],
         onTap: onItemTapped,
         activeColor:Color(0xFF513ADA) ,
@@ -89,14 +90,14 @@ class _DashboardState extends State<Dashboard> {
   void onItemTapped(int index) async{
 
       selectedIndex = index;
-      if (index==3){
-        await LoginController.signOut(context: context);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                const Login()));
-      }
+      // if (index==3){
+      //   await LoginController.signOut(context: context);
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) =>
+      //           const Login()));
+      // }
 
     setState(() { });
 }

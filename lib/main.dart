@@ -1,15 +1,19 @@
 import 'package:evetoapp/controllers/loginController.dart';
+import 'package:evetoapp/providers/eventProvider.dart';
 import "package:firebase_core/firebase_core.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider.value(value: eventProvider.initialize())],
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
