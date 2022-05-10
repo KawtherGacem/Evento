@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // LatLng? _center;
   // String? currentAddress;
   //
@@ -40,36 +42,31 @@ class _HomePageState extends State<HomePage> {
     final EventProvider = Provider.of<eventProvider>(context);
 
     return Scaffold(
+        key: _scaffoldKey,
         drawer: Drawer(
-          child: Container(
-            color: Colors.white,
-            child: ListView(
-              children: [
-                ListTile(
-                  title: Text("test"),
-                )
-              ],
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: [
+                  ProfileScreen(),
+
+                ],
+              ),
             ),
           ),
         ),
         appBar:  AppBar(
-          leading: Container(
-            padding: EdgeInsets.symmetric(horizontal: 0),
-            margin: EdgeInsets.only(left: 10),
-            child: GestureDetector(
-              child: CircleAvatar(
+          leading: IconButton(
+            icon:  CircleAvatar(
                 radius: 10,
                 backgroundImage: Image
                     .network(
                   _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
                     .image,
-
-              ),
-              onTap: (){
-                Scaffold.of(context).openDrawer();
-              },
-
             ),
+            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+
+
           ),
 
           leadingWidth: 50,
