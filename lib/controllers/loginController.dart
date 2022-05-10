@@ -6,11 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 
 import '../dashboard.dart';
 import '../login.dart';
@@ -84,10 +82,7 @@ class LoginController with ChangeNotifier{
 
     if (user != null) {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => MultiProvider(providers: [
-          ChangeNotifierProvider.value(value: eventProvider.initialize())
-        ],
-            child: Dashboard(user: user!))),
+        MaterialPageRoute(builder: (context) => Dashboard(user: user!)),
       );
     }
     return user;
@@ -123,8 +118,7 @@ class LoginController with ChangeNotifier{
                 Theme.of(context).textTheme,
               )
           ),
-          home:
-          Dashboard(user: user,),
+          home: Dashboard(user: user,),
         )
         ),
       );
@@ -138,4 +132,14 @@ class LoginController with ChangeNotifier{
     }
 
     return firebaseApp;
-  }}
+  }
+  final firestoreInstance = FirebaseFirestore.instance;
+  void addPhoto(String photoURL) {
+    firestoreInstance.collection("users").add(
+        {
+          "organizerPhoto":photoURL,
+        }).then((value){
+      print(value.id);
+    });
+  }
+}

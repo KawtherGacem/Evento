@@ -1,25 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'models/Event.dart';
-
 class EventPage extends StatefulWidget {
-  const EventPage({Key? key, required Event event})
+  const EventPage({Key? key, required DocumentSnapshot event})
       : _event = event,
 
   super(key: key);
-  final Event _event;
+  final DocumentSnapshot _event;
 
   @override
   State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
-  late Event event;
+  late DocumentSnapshot<Map<String,dynamic>> event;
 
   @override
   void initState() {
-    event =widget._event ;
+    event =widget._event as DocumentSnapshot<Map<String, dynamic>>;
     super.initState();
   }
 
@@ -31,7 +29,7 @@ class _EventPageState extends State<EventPage> {
           margin: EdgeInsets.all(50),
           child: Card(
             child: ListTile(
-              title: Text(event.title!,)
+              title: Text(event.data()!["title"]),
             ),
           ),
     ));
