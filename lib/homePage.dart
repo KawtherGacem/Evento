@@ -8,10 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-//import 'package:latlng/latlng.dart';
-//import 'package:geocoding/geocoding.dart';
+import 'package:latlng/latlng.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'confidentialite.dart';
 import 'contact.dart';
@@ -30,17 +30,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  // LatLng? _center;
-  // String? currentAddress;
-  //
-  // Position? currentLocation;
+  LatLng? _center;
+  String? currentAddress;
+
+  Position? currentLocation;
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getUserLocation();
+    getUserLocation();
   }
 
   @override
@@ -120,18 +120,18 @@ class _HomePageState extends State<HomePage> {
 
           leadingWidth: 50,
           centerTitle: true,
-          title: Container(
-            width: 125,
-            // margin: EdgeInsets.only(left: 10),
-            child: Image.asset("assets/logotwil.png"),
+                    title: Container(
+                    width: 125,
+                     // margin: EdgeInsets.only(left: 10),
+                     child: Image.asset("assets/logotwil.png"),
           ),
           elevation: 0,
           backgroundColor: Colors.white,
           // title: ,
           //   ,
           actions: <Widget>[
-            IconButton(
-              icon: Icon(
+                       IconButton(
+                       icon: Icon(
                 Icons.notifications_outlined,
                 color: Color(0xFF513ADA),
                 size: 35,
@@ -145,6 +145,20 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                FutureBuilder(
+                    future: getUserLocation(),
+                    builder: (BuildContext context,AsyncSnapshot snapshot){
+                      if (snapshot.hasData){
+                        if (currentLocation != null &&
+                            currentAddress != null) {
+                          return Text(currentAddress!,);
+                        }
+                      }
+                      else {
+                        return Text("Locating your city");
+                      }
+                      return Text("Locating your city....");
+                }),
                 Padding(
                   padding: const EdgeInsets.only(top: 10, left: 10),
                   child: Text('Recommended',
@@ -152,17 +166,13 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(color: Colors.black,)
                   ),
                 ),
-                // if (currentLocation != null &&
-                // currentAddress != null)
-                // Text(currentAddress!,),
-                // Flexible(
-                //   child: FutureBuilder(
-                //     future: getEvents(),
-                //     builder: (context, AsyncSnapshot snapshot) {
-                //       if (snapshot.hasData) {
-                //         return
                 Flexible(
-                    child: Padding(
+                  // child: FutureBuilder(
+                  //   future: getEvents(),
+                  //   builder: (context, AsyncSnapshot snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       return Flexible(
+                      child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -339,16 +349,15 @@ class _HomePageState extends State<HomePage> {
                           }),
                     )
 
-
-                ),
-                Divider(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 10),
-                  child: Text('All',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.black,)
-                  ),
-                ),
+                       ),
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, left: 10),
+                      child: Text('All',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.black,)
+                      ),
+                    ),
                 Flexible(
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -533,58 +542,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future getEvents() async {
-    var firestore = FirebaseFirestore.instance;
-    QuerySnapshot qn = await firestore.collection("events").get();
+  // Future getEvents() async {
+  //   var firestore = FirebaseFirestore.instance;
+  //   QuerySnapshot qn = await firestore.collection("events").get();
+  //
+  //   return qn.docs;
+  // }
 
-    return qn.docs;
+Future<dynamic> getUserLocation() async {
+  currentLocation = await locateUser();
+  setState(() {
+    _center = LatLng(currentLocation!.latitude, currentLocation!.longitude);
+  });
+  try {
+    // Geolocator geolocator = Geolocator();
+    List<Placemark> p = await placemarkFromCoordinates(
+        currentLocation!.latitude, currentLocation!.longitude);
+    Placemark place = p[0];
+    setState(() {
+      currentAddress =
+      "${place.administrativeArea}, ${place.country}";
+    });
+  } catch (e) {
+    print(e);
   }
+  print(currentAddress);
+  print('center $_center');
+  return currentAddress;
+}
 
-// void getUserLocation() async {
-//   currentLocation = await locateUser();
-//   setState(() {
-//     _center = LatLng(currentLocation!.latitude, currentLocation!.longitude);
-//   });
-//   try {
-//     // Geolocator geolocator = Geolocator();
-//     List<Placemark> p = await placemarkFromCoordinates(
-//         currentLocation!.latitude, currentLocation!.longitude);
-//     Placemark place = p[0];
-//     setState(() {
-//       currentAddress =
-//       "${place.locality}, ${place.postalCode}, ${place.country}";
-//     });
-//   } catch (e) {
-//     print(e);
-//   }
-//   print(currentAddress);
-//   print('center $_center');
-// }
-//
-// Future<Position> locateUser() async {
-//   LocationPermission permission;
-//   permission = await Geolocator.checkPermission();
-//   await Geolocator.requestPermission();
-//   if (permission == LocationPermission.denied) {
-//     permission = await Geolocator.requestPermission();
-//     if (permission == LocationPermission.deniedForever) {
-//       return Future.error('Location Not Available');
-//     }
-//   }
-//   return Geolocator
-//       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-// }
-
+Future<Position> locateUser() async {
+  LocationPermission permission;
+  permission = await Geolocator.checkPermission();
+  await Geolocator.requestPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location Not Available');
+    }
+  }
+  return Geolocator
+      .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+}
 
 }
-// class MyClip extends CustomClipper<Rect> {
-//   Rect getClip(Size size) {
-//     return Rect.fromLTWH(0, 0, 50, 50);
-// }
-//
-//   @override
-//   bool shouldReclip(covariant CustomClipper<Rect> oldClipper) {
-//     // TODO: implement shouldReclip
-//     return true;
-//   }
-// }

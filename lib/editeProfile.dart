@@ -248,6 +248,9 @@ class _EditeprofileState extends State<Editeprofile> {
       ),
     );
   }
+
+
+
   Future uploadPic(BuildContext context) async {
     Reference ref = FirebaseStorage.instance.ref();
     TaskSnapshot addImg =
