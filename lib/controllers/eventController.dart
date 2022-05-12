@@ -17,5 +17,18 @@ class EventController{
     });
 
   }
+  Future<List<Event>> getRecommendedEvents() async{
+    Query query = firestore.collection("events").where("category",arrayContainsAny: ["medecine", "computer science"]);
+    return query.get().then((result) {
+      List<Event> events =[];
+      var event;
+      for( event in result.docs){
+        events.add(Event.fromJson(event.data()));
+      }
+      return events;
+    });
+
+  }
+
 
 }

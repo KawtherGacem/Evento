@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:evetoapp/controllers/addEventController.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:intl/intl.dart';
 
 class addEvent extends StatefulWidget {
   const addEvent({Key? key}) : super(key: key);
@@ -93,6 +95,40 @@ class _addEventState extends State<addEvent> {
           borderRadius: BorderRadius.circular(30),
         )
     ),
+  );
+  final dateField= DateTimeField(
+    format: DateFormat("dd-MM-yyyy"),
+    controller: dateController,
+    onSaved: (value){
+      if (value != null) {
+        dateController.text = DateFormat("dd-MM-yyyy").format(value);
+      }
+    },
+    onShowPicker: (context, currentValue) {
+      return showDatePicker(
+        context: context,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2100),
+        initialDate: currentValue ?? DateTime.now(),
+
+      );
+    },
+  );
+  final timeField= DateTimeField(
+    controller: timeController,
+    format: DateFormat("HH:mm"),
+    onSaved: (value){
+      if (value != null) {
+        timeController.text = value as String ;
+      }
+    },
+    onShowPicker: (context, currentValue) async {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+      );
+      return DateTimeField.convert(time);
+    },
   );
   File imageFile = File("gs://evento-app-2022.appspot.com/images/logo evento tali.png");
   var _image;
@@ -183,7 +219,8 @@ class _addEventState extends State<addEvent> {
                 Container(
                     child: descriptionField),
 
-
+                timeField,
+                dateField,
                 Obx(()=> controller.selectedList.value.length==0 ? Text("no category selected")
                     :Wrap(
                         children:
@@ -235,7 +272,7 @@ class _addEventState extends State<addEvent> {
                     minWidth: MediaQuery.of(context).size.width,
                     onPressed: () async {
                         await uploadPic(context);
-                        eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString());
+                        eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString(),dateController.text,timeController.text);
                         Fluttertoast.showToast(msg: "Event added");
 
                     },

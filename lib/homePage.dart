@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/editeProfile.dart';
 import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,15 +45,30 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: Drawer(
-          child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: [
-                  ProfileScreen(),
-
-                ],
+          child:ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
               ),
+              child: Text('Drawer Header'),
             ),
+            ListTile(
+              title: const Text('Show Profile'),
+              onTap: () {
+                  Get.to(Editeprofile());
+              },
+            ),
+            ListTile(
+              title: const Text('Contact us'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+          ],
           ),
         ),
         appBar:  AppBar(
@@ -98,7 +114,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 10, left: 10),
-                  child: Text('All',
+                  child: Text('Recommended',
                       textAlign: TextAlign.start,
                       style: TextStyle(color: Colors.black,)
                   ),
@@ -112,6 +128,194 @@ class _HomePageState extends State<HomePage> {
                 //     builder: (context, AsyncSnapshot snapshot) {
                 //       if (snapshot.hasData) {
                 //         return
+                Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.only(top: 0),
+                          itemCount: EventProvider.recommendedEvents.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        15)
+                                ),
+                                margin: EdgeInsets.only(right: 10),
+                                elevation: 2,
+                                child: GestureDetector(
+                                  child: Container(
+                                      height: 270,
+                                      child: Column(
+                                        children: [
+                                          Stack(
+                                            // fit: StackFit.
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: const BorderRadius
+                                                    .only(
+                                                  topLeft: Radius
+                                                      .circular(
+                                                      15.0),
+                                                  topRight: Radius
+                                                      .circular(
+                                                      15.0),
+                                                  // bottomRight: Radius
+                                                  //     .circular(25.0),
+                                                  // bottomLeft: Radius
+                                                  //     .circular(25.0),
+                                                ),
+                                                child: Container(
+                                                  height: 200,
+                                                  width: 372,
+                                                  child: Image(
+                                                    image: Image
+                                                        .network(
+                                                        EventProvider
+                                                            .events[index]
+                                                            .photoUrl!)
+                                                        .image,
+                                                    fit: BoxFit.cover,
+                                                    color: Colors.black54
+                                                        .withOpacity(0.1),
+                                                    colorBlendMode: BlendMode
+                                                        .colorBurn,
+                                                    frameBuilder: (
+                                                        BuildContext context,
+                                                        Widget child,
+                                                        int? frame,
+                                                        bool wasSynchronouslyLoaded) {
+                                                      if (wasSynchronouslyLoaded ||
+                                                          frame != null) {
+                                                        return Container(
+                                                          child: child,
+                                                          foregroundDecoration: const BoxDecoration(
+                                                              gradient: LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topCenter,
+                                                                  end: Alignment
+                                                                      .bottomCenter,
+                                                                  colors: [
+                                                                    Color(
+                                                                        0xCC000000),
+                                                                    Color(
+                                                                        0x00000000),
+                                                                    Color(
+                                                                        0x00000000),
+
+                                                                    Color(
+                                                                        0xA6000000),
+                                                                    Color(
+                                                                        0xD5000000),
+                                                                  ]
+                                                              )
+                                                          ),
+                                                          height: 220,
+                                                          width: double
+                                                              .infinity,
+                                                        );
+                                                      } else {
+                                                        return Container(
+                                                          child: CircularProgressIndicator(
+                                                              color: Colors
+                                                                  .grey,
+                                                              value: null,
+                                                              backgroundColor: Colors
+                                                                  .white),
+                                                          alignment: Alignment(
+                                                              0, 0),
+                                                          constraints: BoxConstraints
+                                                              .expand(),
+                                                        );
+                                                      }
+                                                    },
+                                                    // loadingBuilder: (BuildContext context, Widget child,
+                                                    // ImageChunkEvent? loadingProgress) {
+                                                    // if (loadingProgress == null) {
+                                                    // return child;
+                                                    // }
+                                                    // return Center(
+                                                    // child: CircularProgressIndicator(
+                                                    //       value: loadingProgress.expectedTotalBytes != null
+                                                    //       ? loadingProgress.cumulativeBytesLoaded /
+                                                    //       loadingProgress.expectedTotalBytes!
+                                                    //           : null,),
+                                                    //     );}),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              Positioned(
+                                                bottom: 15,
+                                                left: 13,
+                                                right: 20,
+                                                child: Text(EventProvider
+                                                    .events[index].title!,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight
+                                                          .w800,
+                                                      fontFamily: "Lato"),),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(25)),
+                                            height: 30,
+                                            child: Row(
+                                              children: [
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  onTap: () {
+                                    Get.to(EventPage(
+                                        event: EventProvider
+                                            .events[index]));
+                                  },
+
+                                )
+                              //   } else if (snapshot.hasError) {
+                              //     return Text('${snapshot.error}');
+                              //   }
+                              //   // By default, show a loading spinner.
+                              //   return Center(
+                              //       heightFactor: 50,
+                              //       widthFactor: 50,
+                              //       child: CircularProgressIndicator(
+                              //         semanticsLabel: "Loading events...",
+                              //         strokeWidth: 2, color: Colors.black,));
+                              // },
+                            );
+
+                            // child: ListView.builder(
+                            //   itemCount: 10,
+                            //   itemBuilder: (BuildContext ctx, int index) {
+                            //     return Card(
+                            //       shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(20)
+                            //       ),
+                            //       child: Text("testing testing "),
+                            //     );
+                            //   },
+                            // ),
+                          }),
+                    )
+
+
+                ),
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 10),
+                  child: Text('All',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.black,)
+                  ),
+                ),
                 Flexible(
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
