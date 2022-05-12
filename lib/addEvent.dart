@@ -26,6 +26,8 @@ class SelectedListController extends GetxController{
 class _addEventState extends State<addEvent> {
   static final TextEditingController titleController = TextEditingController();
   static final TextEditingController descriptionController = TextEditingController();
+  static final TextEditingController timeController = TextEditingController();
+  static final TextEditingController dateController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   addEventController eventController= addEventController();
 
@@ -82,7 +84,7 @@ class _addEventState extends State<addEvent> {
     decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white54,
-        hintText: "Event title",
+        hintText: "Event description",
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: const BorderSide(color: Color(0xFF513ADA)),

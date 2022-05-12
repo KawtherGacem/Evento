@@ -4,6 +4,7 @@ import 'package:evetoapp/homePage.dart';
 import 'package:evetoapp/models/users/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'controllers/loginController.dart';
@@ -120,11 +121,7 @@ class _DashboardState extends State<Dashboard> {
               // setState(() {
               // _isSigningOut = false;
               // });
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                      const Login()));
+             Get.offAll(Login());
             },
           ),
         ],

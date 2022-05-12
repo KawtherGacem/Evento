@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -123,12 +124,13 @@ class LoginController with ChangeNotifier{
         ),
       );
     }else{
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => Login(
-          ),
-        ),
-      );
+      Get.offAll(Login());
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(
+      //     builder: (context) => Login(
+      //     ),
+      //   ),
+      // );
     }
 
     return firebaseApp;

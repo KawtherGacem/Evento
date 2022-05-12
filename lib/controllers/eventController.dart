@@ -9,7 +9,8 @@ class EventController{
   Future<List<Event>> getEvents() async{
     return firestore.collection("events").get().then((result) {
       List<Event> events =[];
-      for(final event in result.docs){
+      var event;
+      for( event in result.docs){
         events.add(Event.fromJson(event.data()));
       }
       return events;

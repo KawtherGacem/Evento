@@ -19,12 +19,11 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(1080,2280),
+      designSize: const Size(1080,2280),
       builder: (_) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,

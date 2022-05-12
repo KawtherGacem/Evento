@@ -1,70 +1,52 @@
-
-import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-//import 'package:latlng/latlng.dart';
-//import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
+
 import 'eventPage.dart';
 
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class FavoutitesPage extends StatefulWidget {
+  const FavoutitesPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<FavoutitesPage> createState() => _FavoutitesPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  // LatLng? _center;
-  // String? currentAddress;
-  //
-  // Position? currentLocation;
+class _FavoutitesPageState extends State<FavoutitesPage> {
+
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // getUserLocation();
-  }
 
   @override
   Widget build(BuildContext context) {
     final EventProvider = Provider.of<eventProvider>(context);
 
     return Scaffold(
-        key: _scaffoldKey,
-        drawer: Drawer(
-          child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: [
-                  ProfileScreen(),
-
-                ],
-              ),
-            ),
-          ),
-        ),
+        // key: _scaffoldKey,
+        // drawer: Drawer(
+        //   child: SingleChildScrollView(
+        //     child: Container(
+        //       child: Column(
+        //         children: [
+        //           ProfileScreen(),
+        //
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
         appBar:  AppBar(
           leading: IconButton(
             icon:  CircleAvatar(
-                radius: 15,
-                backgroundImage: Image
-                    .network(
-                  _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
-                    .image,
-            ),
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+              radius: 15,
+              backgroundImage: Image
+                  .network(
+                _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
+                  .image,
+            ), onPressed: () {  },
+            // onPressed: () => _scaffoldKey.currentState?.openDrawer(),
 
 
           ),
@@ -296,58 +278,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future getEvents() async {
-    var firestore = FirebaseFirestore.instance;
-    QuerySnapshot qn = await firestore.collection("events").get();
-
-    return qn.docs;
-  }
-
-// void getUserLocation() async {
-//   currentLocation = await locateUser();
-//   setState(() {
-//     _center = LatLng(currentLocation!.latitude, currentLocation!.longitude);
-//   });
-//   try {
-//     // Geolocator geolocator = Geolocator();
-//     List<Placemark> p = await placemarkFromCoordinates(
-//         currentLocation!.latitude, currentLocation!.longitude);
-//     Placemark place = p[0];
-//     setState(() {
-//       currentAddress =
-//       "${place.locality}, ${place.postalCode}, ${place.country}";
-//     });
-//   } catch (e) {
-//     print(e);
-//   }
-//   print(currentAddress);
-//   print('center $_center');
-// }
-//
-// Future<Position> locateUser() async {
-//   LocationPermission permission;
-//   permission = await Geolocator.checkPermission();
-//   await Geolocator.requestPermission();
-//   if (permission == LocationPermission.denied) {
-//     permission = await Geolocator.requestPermission();
-//     if (permission == LocationPermission.deniedForever) {
-//       return Future.error('Location Not Available');
-//     }
-//   }
-//   return Geolocator
-//       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-// }
-
-
 }
-// class MyClip extends CustomClipper<Rect> {
-//   Rect getClip(Size size) {
-//     return Rect.fromLTWH(0, 0, 50, 50);
-// }
-//
-//   @override
-//   bool shouldReclip(covariant CustomClipper<Rect> oldClipper) {
-//     // TODO: implement shouldReclip
-//     return true;
-//   }
-// }
