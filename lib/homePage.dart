@@ -13,7 +13,12 @@ import 'package:get/get.dart';
 //import 'package:latlng/latlng.dart';
 //import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
+import 'confidentialite.dart';
+import 'contact.dart';
+import 'controllers/loginController.dart';
 import 'eventPage.dart';
+import 'login.dart';
+import 'myOwnEvent.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -44,46 +49,74 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         key: _scaffoldKey,
-        drawer: Drawer(
-          child:ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
+              drawer: Drawer(
+              child: ListView(
+              children: [
+              Container(
+              child: Column(
+              children: [
+              ProfileScreen(),
+
+                ],
+                ),
+                ),
+                SizedBox(height: 20),
+                ListTile(
+                title: Text('Mes evenements',
+                style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 16,),
+                ),
+                leading: Icon(Icons.my_library_books_outlined,color: Colors.deepPurpleAccent,),
+                onTap: (){
+                Get.to(MyOwnEvent());
+                },
+          ),
+                SizedBox(height: 20),
+                ListTile(
+                title: Text('Confidentialité et securité',
+                style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 16,),
+                ),
+                leading: Icon(Icons.privacy_tip_outlined,color: Colors.deepPurpleAccent,),
+                onTap: (){
+                Get.to(Confidentialite());
+                },
+                      ),
+                SizedBox(height: 20),
+                ListTile(
+                title: Text('Contact',
+                style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 16,),
+                ),
+                leading: Icon(Icons.contact_support_outlined,color: Colors.deepPurpleAccent,),
+                onTap: (){
+                Get.to(Contact());
+                },
+                ),
+                SizedBox(height: 20),
+                ListTile(
+                title: Text('Déconnecter',
+                style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 16,),
+                ),
+                leading: Icon(Icons.logout,color: Colors.deepPurpleAccent,),
+                onTap: () async {
+                  await LoginController.signOut(context: context);
+                  Get.to(Login());
+                },
+                ),
+                ],
+                ),
               ),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: const Text('Show Profile'),
-              onTap: () {
-                  Get.to(Editeprofile());
-              },
-            ),
-            ListTile(
-              title: const Text('Contact us'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-          ],
-          ),
-        ),
-        appBar:  AppBar(
-          leading: IconButton(
-            icon:  CircleAvatar(
-                radius: 15,
-                backgroundImage: Image
-                    .network(
-                  _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
-                    .image,
-            ),
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                    appBar:  AppBar(
+                leading: IconButton(
+                  icon:  CircleAvatar(
+                      radius: 15,
+                      backgroundImage: Image
+                          .network(
+                        _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
+                          .image,
+                  ),
+                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
 
 
-          ),
+                ),
 
           leadingWidth: 50,
           centerTitle: true,
