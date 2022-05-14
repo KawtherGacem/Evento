@@ -19,7 +19,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   static final TextEditingController emailController = TextEditingController();
   static final TextEditingController passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>(debugLabel: '_LoginPageKey');
 
 
   final _auth = FirebaseAuth.instance;
@@ -131,7 +131,7 @@ class _LoginState extends State<Login> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 150.w),
                             child: Form(
-                              key: _formKey,
+                              key: _formKey1,
                               child: SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +253,7 @@ class _LoginState extends State<Login> {
           });
   }
   void login(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey1.currentState!.validate()) {
       try {
         await _auth
             .signInWithEmailAndPassword(email: email, password: password)

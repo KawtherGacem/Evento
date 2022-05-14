@@ -8,18 +8,12 @@ class Event {
   String? organizerPhoto;
   String? organizerName;
   String? photoUrl;
+  String? time;
+  String? date;
   List<dynamic> category=[];
 
 
-  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl);
-// String? date;
-  // String? time;
-  // String? address;
-  // String? photo;
-  // String? inscriptionUrl;
-  // String? nbrInterested;
-  // String? category;
-  // String? organizer;
+  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.date, this.time);
 
   Event.fromJson(Map<String,dynamic> json){
     id =json["id"];
@@ -30,5 +24,7 @@ class Event {
     uid = json["uid"];
     category = json["category"];
     photoUrl = json["photoUrl"];
+    time= json["time"];
+    date= json["date"];
   }
 }

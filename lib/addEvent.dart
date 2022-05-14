@@ -119,6 +119,7 @@ class _addEventState extends State<addEvent> {
     format: DateFormat("HH:mm"),
     onSaved: (value){
       if (value != null) {
+
         timeController.text = value as String ;
       }
     },

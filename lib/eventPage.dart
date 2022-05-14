@@ -31,7 +31,8 @@ class _EventPageState extends State<EventPage> {
           margin: EdgeInsets.all(50),
           child: Card(
             child: ListTile(
-                title: Text(event.title!,)
+                title: Text(event.title!,),
+                    subtitle: Text(event.time!),
             ),
           ),
         ));

@@ -15,7 +15,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(debugLabel: 'SignUpPageKey');
   final _auth = FirebaseAuth.instance;
   String? errorMessage;
 
