@@ -52,6 +52,7 @@ dependencies:
   get: 4.6.0
   favorite_button: 0.0.4
   datetime_picker_formfield: 2.0.0
+  date_field: 2.1.2
   geolocator: 8.2.1
   latlng: 0.1.0
   geocoding: 2.0.4

@@ -52,13 +52,6 @@ class LoginController with ChangeNotifier{
       }    }
     // puting data in firestore db
 
-    UserModel userModel = UserModel();
-    userModel.email = user?.email;
-    userModel.uid = user?.uid;
-    userModel.fullName = user?.displayName;
-    userModel.userName = user?.displayName;
-    userModel.photoURL =user?.photoURL;
-
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
     await firebaseFirestore

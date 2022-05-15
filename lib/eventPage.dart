@@ -32,7 +32,7 @@ class _EventPageState extends State<EventPage> {
           child: Card(
             child: ListTile(
                 title: Text(event.title!,),
-                    subtitle: Text(event.time!),
+                    subtitle: Text(event.startingDate!.toString()),
             ),
           ),
         ));

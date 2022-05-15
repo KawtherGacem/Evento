@@ -10,13 +10,14 @@ class Event {
   String? organizerPhoto;
   String? organizerName;
   String? photoUrl;
-  String? time;
-  String? date;
-  GeoPoint? eventLocation;
+  Timestamp? startingDate;
+  Timestamp? endingDate;
+  Map<String,dynamic>? eventLocation;
+  String? inscriptionUrl;
   List<dynamic> category=[];
 
 
-  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.date, this.time , this.eventLocation);
+  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.startingDate, this.endingDate , this.eventLocation, this.inscriptionUrl);
 
   Event.fromJson(Map<String,dynamic> json){
     id =json["id"];
@@ -27,8 +28,9 @@ class Event {
     uid = json["uid"];
     category = json["category"];
     photoUrl = json["photoUrl"];
-    time= json["time"];
-    date= json["date"];
+    startingDate= json["startingDate"];
+    endingDate= json["endingDate"];
     eventLocation= json["eventLocation"];
+    inscriptionUrl=json["inscriptionUrl"];
   }
 }

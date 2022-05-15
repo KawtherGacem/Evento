@@ -343,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                                                                 .events[index].title!,
                                                               style: TextStyle(
                                                                   color: Colors.white,
-                                                                  fontSize: 20,
+                                                                  fontSize: 15,
                                                                   fontWeight: FontWeight
                                                                       .w800,
                                                                   fontFamily: "Lato"),),
@@ -357,7 +357,16 @@ class _HomePageState extends State<HomePage> {
                                                       decoration: BoxDecoration(
                                                           borderRadius: BorderRadius
                                                               .circular(25)),
-                                                      child: Text("enf"
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              // Icon(Icons.)
+                                                              Text("enf"
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ],
@@ -369,31 +378,9 @@ class _HomePageState extends State<HomePage> {
                                             },
 
                                           )
-                                        //   } else if (snapshot.hasError) {
-                                        //     return Text('${snapshot.error}');
-                                        //   }
-                                        //   // By default, show a loading spinner.
-                                        //   return Center(
-                                        //       heightFactor: 50,
-                                        //       widthFactor: 50,
-                                        //       child: CircularProgressIndicator(
-                                        //         semanticsLabel: "Loading events...",
-                                        //         strokeWidth: 2, color: Colors.black,));
-                                        // },
                                     ),
                                       );
 
-                                    // child: ListView.builder(
-                                    //   itemCount: 10,
-                                    //   itemBuilder: (BuildContext ctx, int index) {
-                                    //     return Card(
-                                    //       shape: RoundedRectangleBorder(
-                                    //         borderRadius: BorderRadius.circular(20)
-                                    //       ),
-                                    //       child: Text("testing testing "),
-                                    //     );
-                                    //   },
-                                    // ),
                                   })
 
                                ),
@@ -510,18 +497,6 @@ class _HomePageState extends State<HomePage> {
                                                         );
                                                       }
                                                     },
-                                                    // loadingBuilder: (BuildContext context, Widget child,
-                                                    // ImageChunkEvent? loadingProgress) {
-                                                    // if (loadingProgress == null) {
-                                                    // return child;
-                                                    // }
-                                                    // return Center(
-                                                    // child: CircularProgressIndicator(
-                                                    //       value: loadingProgress.expectedTotalBytes != null
-                                                    //       ? loadingProgress.cumulativeBytesLoaded /
-                                                    //       loadingProgress.expectedTotalBytes!
-                                                    //           : null,),
-                                                    //     );}),
                                                   ),
                                                 ),
                                               ),
@@ -534,7 +509,7 @@ class _HomePageState extends State<HomePage> {
                                                     .events[index].title!,
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 20,
+                                                      fontSize: 17,
                                                       fontWeight: FontWeight
                                                           .w800,
                                                       fontFamily: "Lato"),),

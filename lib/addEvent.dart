@@ -14,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 
+import 'models/Event.dart';
+
 class addEvent extends StatefulWidget {
   const addEvent({Key? key}) : super(key: key);
 
@@ -25,11 +27,15 @@ class SelectedListController extends GetxController{
   var selectedList = List<String>.empty(growable: true).obs;
 }
 
+
 class _addEventState extends State<addEvent> {
   static final TextEditingController titleController = TextEditingController();
   static final TextEditingController descriptionController = TextEditingController();
-  static final TextEditingController timeController = TextEditingController();
-  static final TextEditingController dateController = TextEditingController();
+  static final TextEditingController inscriptionUrlController = TextEditingController();
+
+  late Timestamp startingDate;
+  late Timestamp endingDate;
+
   final _auth = FirebaseAuth.instance;
   addEventController eventController= addEventController();
 
@@ -50,7 +56,9 @@ class _addEventState extends State<addEvent> {
   final titleField= TextFormField(
     autofocus: false,
     controller: titleController,
-    keyboardType: TextInputType.text,
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    minLines: 1,
     // validator: ,
     cursorColor: const Color(0xFF513ADA),
     onSaved: (value){
@@ -58,7 +66,6 @@ class _addEventState extends State<addEvent> {
         titleController.text = value;
       }
     },
-    textInputAction: TextInputAction.next,
     decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white54,
@@ -101,47 +108,44 @@ class _addEventState extends State<addEvent> {
         )
     ),
   );
-  final dateField= DateTimeField(
-    format: DateFormat("dd-MM-yyyy"),
-    controller: dateController,
-    onSaved: (value){
+
+  final inscriptionUrlField= TextField(
+    autofocus: false,
+    controller: inscriptionUrlController,
+    keyboardType: TextInputType.multiline,
+    minLines: 1,
+    maxLines: null,
+    cursorColor: const Color(0xFF513ADA),
+    onSubmitted: (value){
       if (value != null) {
-        dateController.text = DateFormat("dd-MM-yyyy").format(value);
+        inscriptionUrlController.text = value;
       }
     },
-    onShowPicker: (context, currentValue) {
-      return showDatePicker(
-        context: context,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2100),
-        initialDate: currentValue ?? DateTime.now(),
-
-      );
-    },
+    textInputAction: TextInputAction.next,
+    decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white54,
+        hintText: "Lien d'inscription",
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xFF513ADA)),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+        )
+    ),
   );
-  final timeField= DateTimeField(
-    controller: timeController,
-    format: DateFormat("HH:mm"),
-    onSaved: (value){
-      if (value != null) {
 
-        timeController.text = value as String ;
-      }
-    },
-    onShowPicker: (context, currentValue) async {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-      );
-      return DateTimeField.convert(time);
-    },
-  );
   File imageFile = File("gs://evento-app-2022.appspot.com/images/logo evento tali.png");
   var _image;
   var DownLoadUrl;
 
   @override
   void dispose(){
+    _image=null;
+    titleController.clear();
+    descriptionController.clear();
+    controller.dispose();
     mapController.dispose();
     super.dispose();
   }
@@ -199,17 +203,6 @@ class _addEventState extends State<addEvent> {
           }
         });
       });}
-      // setState((){
-      //   DownLoadUrl = DUrl ;
-      //  });
-      // String fileName = basename(_image.path);
-      // FirebaseStorage storage = FirebaseStorage.instance;
-      // Reference firebaseStorageRef = storage.ref()
-      //     .child("images/");
-      // UploadTask uploadTask = firebaseStorageRef.putFile(File(_image.path));
-      // uploadTask.then((res) {
-      //   return res.ref.getDownloadURL();
-      // });
 
 
       return Scaffold(
@@ -231,9 +224,63 @@ class _addEventState extends State<addEvent> {
                 titleField,
                 Container(
                     child: descriptionField),
-
-                timeField,
-                dateField,
+                inscriptionUrlField,
+                DateTimeField(
+                  format: DateFormat("yyyy-MM-dd HH:mm"),
+                  onSaved: (value){
+                    if (value != null) {
+                      setState(() {
+                        startingDate =Timestamp.fromDate(value);
+                      });
+                    }
+                  },
+                  onShowPicker: (context, currentValue) async {
+                    final date = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now(),
+                        initialDate: currentValue ?? DateTime.now(),
+                        lastDate: DateTime(2100));
+                    if (date != null) {
+                      final time = await showTimePicker(
+                        context: context,
+                        initialTime:
+                        TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                      );
+                      startingDate =Timestamp.fromDate(DateTimeField.combine(date, time));
+                      return DateTimeField.combine(date, time);
+                    } else {
+                      return currentValue;
+                    }
+                  },
+                ),
+              DateTimeField(
+                format: DateFormat("yyyy-MM-dd HH:mm"),
+                onSaved: (value){
+                  if (value != null) {
+                    setState(() {
+                      endingDate =Timestamp.fromDate(value);
+                    });
+                  }
+                },
+                onShowPicker: (context, currentValue) async {
+                  final date = await showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+                  if (date != null) {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime:
+                      TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                    );
+                    endingDate =Timestamp.fromDate(DateTimeField.combine(date, time));
+                    return DateTimeField.combine(date, time);
+                  } else {
+                    return currentValue;
+                  }
+                },
+              ),
                 Obx(()=> controller.selectedList.value.length==0 ? Text("no category selected")
                     :Wrap(
                         children:
@@ -269,16 +316,41 @@ class _addEventState extends State<addEvent> {
                       },
                     child: Text("Add photo")),
                 _image == null
-                    ? Text('No image selected.')
-                    : Image.file(File(
-                  _image.path),
+                    ? Container(
                   height: 300,
-                ),
+                  color: Colors.grey,
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () {
+                        getImage();
+                      },
+                      icon: Icon( Icons.add_a_photo_outlined),
+
+                    ),
+                  ),
+                )
+                    : Stack(
+                      children: [
+                        Image.file(
+                          File(_image.path),
+                          height: 300,
+                      ),
+                        Center(
+                          child: IconButton(
+                            onPressed: () {
+                              getImage();
+                            },
+                            icon: Icon( Icons.add_a_photo_outlined),
+
+                          ),
+                        )
+                      ],
+                    ),
                 SizedBox(
                   height: 50,
                 ),
                 Container(
-                  height: 300,
+                  height: 500,
                   child: Stack(
                     children: [
                       GoogleMap(
@@ -320,9 +392,12 @@ class _addEventState extends State<addEvent> {
                     minWidth: MediaQuery.of(context).size.width,
                     onPressed: () async {
                         await uploadPic(context);
-                        eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString(),dateController.text,timeController.text,eventLocation);
-                        Fluttertoast.showToast(msg: "Event added");
-
+                        if(endingDate.toDate().isBefore(startingDate.toDate())){
+                          Fluttertoast.showToast(msg: "La date de fin est avant la date de debut");
+                        }else {
+                          await eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString(),startingDate,endingDate,eventLocation, inscriptionUrlController.text);
+                         Fluttertoast.showToast(msg: "Event added");
+                        }
                     },
                     child: Text("Add",textAlign: TextAlign.center,style: TextStyle(
                       fontSize:20 ,color: const Color(0xFFFFFFFF),fontWeight: FontWeight.bold,

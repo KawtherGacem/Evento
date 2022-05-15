@@ -9,7 +9,7 @@ class addEventController {
 
   final firestoreInstance = FirebaseFirestore.instance;
 
-   Future<void> addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl, String date, String time, GeoFirePoint eventLocation) async {
+   Future<void> addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl, Timestamp startingDate, Timestamp endingDate, GeoFirePoint eventLocation, String inscriptionUrl) async {
      var userName,photoUrl;
      await GetUser(user!.uid).then((value) => userName = value.userName);
      await GetUser(user.uid).then((value) => photoUrl = value.photoURL);
@@ -21,11 +21,12 @@ class addEventController {
           "uid" : user.uid,
           "organizerName":userName,
           "organizerPhoto":photoUrl,
-          "date":date,
-          "time":time,
+          "startingDate":startingDate,
+          "endingDate":endingDate,
           "eventLocation":eventLocation.data,
           "photoUrl":downLoadUrl,
-          "category" : list
+          "category" : list,
+          "inscriptionUrl": inscriptionUrl
         }).then((value){
       print(value.id);
     });
@@ -37,7 +38,7 @@ class addEventController {
     var doc= await firestoreInstance.collection("users").doc(uid);
     firestoreInstance.collection("users").doc(uid).get().then((value){
     });
-      await doc.get().then((value) => user.photoURL = value.data()!["photoUrl"]);
+      await doc.get().then((value) => user.photoURL = value.data()!["photo"]);
       await doc.get().then((value) => user.userName = value.data()!["userName"]);
     return user;
 
