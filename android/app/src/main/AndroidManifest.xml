@@ -6,6 +6,10 @@
     <application
         android:label="evetoapp"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA41ujzSYvGdZONDPXknvYYLGpVMAeXrk4"
+            />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -21,10 +25,7 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-            <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyA41ujzSYvGdZONDPXknvYYLGpVMAeXrk4"
-                />
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Event {
   String? id;
@@ -10,10 +12,11 @@ class Event {
   String? photoUrl;
   String? time;
   String? date;
+  GeoPoint? eventLocation;
   List<dynamic> category=[];
 
 
-  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.date, this.time);
+  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.date, this.time , this.eventLocation);
 
   Event.fromJson(Map<String,dynamic> json){
     id =json["id"];
@@ -26,5 +29,6 @@ class Event {
     photoUrl = json["photoUrl"];
     time= json["time"];
     date= json["date"];
+    eventLocation= json["eventLocation"];
   }
 }

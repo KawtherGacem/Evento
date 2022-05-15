@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:evetoapp/controllers/addEventController.dart';
@@ -8,10 +7,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 
 class addEvent extends StatefulWidget {
@@ -33,6 +33,11 @@ class _addEventState extends State<addEvent> {
   final _auth = FirebaseAuth.instance;
   addEventController eventController= addEventController();
 
+  Geoflutterfire geo =Geoflutterfire();
+  late GeoFirePoint eventLocation;
+  late GoogleMapController mapController;
+  late LatLng center;
+  final Set<Marker> markers = new Set();
 
 
   @override
@@ -136,10 +141,17 @@ class _addEventState extends State<addEvent> {
   var DownLoadUrl;
 
   @override
+  void dispose(){
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     List<String> categoryList = ["computer science","biology","art","music",
       "medicine","electronics"];
+
 
    void openFilterDialog(BuildContext context) async {
      await FilterListDialog.display<String>(
@@ -265,6 +277,41 @@ class _addEventState extends State<addEvent> {
                 SizedBox(
                   height: 50,
                 ),
+                Container(
+                  height: 300,
+                  child: Stack(
+                    children: [
+                      GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                        target: LatLng(35.7011269,-0.5838205),
+                        zoom: 10,
+                      ),
+                        onMapCreated:_onMapCreated,
+                        compassEnabled: true,
+                        onTap: (object){
+                        setState(() {
+                           center = LatLng(object.latitude, object.longitude);
+                           setMarker(object);
+                           eventLocation  = geo.point(latitude: object.latitude, longitude: object.longitude);
+                           // eventLocation = GeoPoint(object.latitude, object.longitude);
+                        });
+                        },
+                        markers: markers,
+                      ),
+                      // Positioned(
+                      //     bottom: 50,
+                      //     right: 10,
+                      //     child: FlatButton(
+                      //       child: Icon(Icons.pin_drop,color: Colors.white,),
+                      //       color: Colors.green,
+                      //       onPressed:_addMarker,
+                      //     ))
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Material(
                   elevation: 5,
                   borderRadius: BorderRadius.circular(30),
@@ -273,7 +320,7 @@ class _addEventState extends State<addEvent> {
                     minWidth: MediaQuery.of(context).size.width,
                     onPressed: () async {
                         await uploadPic(context);
-                        eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString(),dateController.text,timeController.text);
+                        eventController.addNewEvent(titleController.text,descriptionController.text,controller.selectedList,_auth.currentUser,DownLoadUrl.toString(),dateController.text,timeController.text,eventLocation);
                         Fluttertoast.showToast(msg: "Event added");
 
                     },
@@ -281,7 +328,7 @@ class _addEventState extends State<addEvent> {
                       fontSize:20 ,color: const Color(0xFFFFFFFF),fontWeight: FontWeight.bold,
                     )),
                   ),
-                )
+                ),
 
               ],
             ),
@@ -290,6 +337,28 @@ class _addEventState extends State<addEvent> {
     ),
       );
 
+
+  }
+
+  _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      mapController=controller;
+    });
+  }
+
+
+  setMarker(LatLng position) {
+    setState(() {
+      markers.clear();
+      markers.add(Marker( //add first marker
+        markerId: MarkerId(position.toString()),
+        position: position, //position of marker
+        infoWindow: InfoWindow( //popup info
+          title: 'Event location',
+        ),
+        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+    });
 
   }
 
@@ -329,4 +398,6 @@ class _addEventState extends State<addEvent> {
   //
   //            ]);
   //         }
+
+
 }

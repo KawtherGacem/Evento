@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/models/users/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class addEventController {
 
   final firestoreInstance = FirebaseFirestore.instance;
 
-   Future<void> addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl, String date, String time) async {
+   Future<void> addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl, String date, String time, GeoFirePoint eventLocation) async {
      var userName,photoUrl;
      await GetUser(user!.uid).then((value) => userName = value.userName);
      await GetUser(user.uid).then((value) => photoUrl = value.photoURL);
@@ -21,6 +23,7 @@ class addEventController {
           "organizerPhoto":photoUrl,
           "date":date,
           "time":time,
+          "eventLocation":eventLocation.data,
           "photoUrl":downLoadUrl,
           "category" : list
         }).then((value){
@@ -39,6 +42,7 @@ class addEventController {
     return user;
 
   }
+
 
 }
 

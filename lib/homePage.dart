@@ -618,8 +618,8 @@ Future<dynamic> getUserLocation() async {
   } catch (e) {
     print(e);
   }
-  print(currentAddress);
-  print('center $_center');
+  // print(currentAddress);
+  // print('center $_center');
   return currentAddress;
 }
 
