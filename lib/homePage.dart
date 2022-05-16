@@ -130,10 +130,10 @@ class _HomePageState extends State<HomePage> {
 
           leadingWidth: 50,
           centerTitle: true,
-                    title: SizedBox(
-                    width: 125,
-                     // margin: EdgeInsets.only(left: 10),
-                     child: Image.asset("assets/logotwil.png"),
+          title: SizedBox(
+            width: 125,
+            // margin: EdgeInsets.only(left: 10),
+            child: Image.asset("assets/logotwil.png"),
           ),
           elevation: 0,
           backgroundColor: Colors.white,

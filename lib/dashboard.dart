@@ -40,7 +40,6 @@ class _DashboardState extends State<Dashboard> {
     HomePage(),
     addEvent(),
     HomePage(),
-    HomePage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -77,11 +76,10 @@ class _DashboardState extends State<Dashboard> {
           TabItem(icon: Icons.home, title: 'Acceuil'),
           TabItem(icon: Icons.add, title: 'Ajouter'),
           TabItem(icon: Icons.favorite, title: 'Fav'),
-          TabItem(icon: Icons.logout, title: 'déconnecter'),
         ],
         onTap: onItemTapped,
-        activeColor:Color(0xFF513ADA) ,
-        color: Color(0xFF513ADA),
+        activeColor:Color(0xFF604BE0) ,
+        color: Color(0xFF604BE0),
         backgroundColor: Color(0xFFFFFFFF),
       )
     );
@@ -89,16 +87,7 @@ class _DashboardState extends State<Dashboard> {
 
   void onItemTapped(int index) async{
 
-      selectedIndex = index;
-      if (index==3){
-        await LoginController.signOut(context: context);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                const Login()));
-      }
-
+    selectedIndex = index;
     setState(() { });
 }
   Widget loggedInUser() {
