@@ -36,13 +36,15 @@ class addEventController {
   Future<UserModel> GetUser(String uid) async {
     UserModel user=UserModel();
     var doc= await firestoreInstance.collection("users").doc(uid);
-    firestoreInstance.collection("users").doc(uid).get().then((value){
-    });
+    // firestoreInstance.collection("users").doc(uid).get().then((value){
+    // });
       await doc.get().then((value) => user.photoURL = value.data()!["photo"]);
       await doc.get().then((value) => user.userName = value.data()!["userName"]);
     return user;
 
   }
+
+
 
 
 }

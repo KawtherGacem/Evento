@@ -12,6 +12,7 @@ import 'contact.dart';
 import 'controllers/loginController.dart';
 import 'eventPage.dart';
 import 'login.dart';
+import 'models/Event.dart';
 import 'myOwnEvent.dart';
 
 
@@ -24,7 +25,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  LatLng? _center;
   String? currentAddress;
   Position? currentLocation;
 
@@ -32,6 +32,10 @@ class _HomePageState extends State<HomePage> {
   ScrollController controller = ScrollController();
   bool closeTopContainer = false;
   double topContainer = 0;
+
+  bool searchIsClicked= false;
+
+  TextEditingController searchController =TextEditingController();
 
 
 
@@ -42,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     getUserLocation();
     controller.addListener(() {
 
-      double value = controller.offset/119;
+      double value = controller.offset/120;
 
       setState(() {
         topContainer = value;
@@ -53,10 +57,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     final EventProvider = Provider.of<eventProvider>(context);
     final Size size = MediaQuery.of(context).size;
+    List<Event>? events =EventProvider.events;
+    void searchEvent(String query) {
+          if (query.isEmpty){
+              EventProvider.loadEvents();
+          }else{
+              EventProvider.events = EventProvider.events.where((event) => event.title!.toLowerCase().contains(query.toLowerCase())).toList();
+          }
+    };
+   
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xffececf5),
         key: _scaffoldKey,
         drawer: Drawer(
               child: ListView(
@@ -150,11 +164,76 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body:  RefreshIndicator(
-          onRefresh: () { return EventProvider.loadEvents(); },
+          onRefresh: () async {
+            // events= await EventProvider.loadEvents();
+            return await EventProvider.loadEvents(); },
           child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  height: 50,
+                  width: 390,
+                  padding: EdgeInsets.only(right: 15,top: 0,bottom: 0,left: 3),
+                  margin: EdgeInsets.only(top: 0,bottom: 0,right: 0,left: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(25),
+                        bottomRight: Radius.circular(25))
+                  ),
+                  child: SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: SizedBox(
+                            height:45,
+                            child:
+                            TextField(
+                              onTap: (){
+                                setState(() {
+                                  searchIsClicked=true;
+                                });
+                              },
+                              onChanged: (value){
+                                searchEvent(value);
+                              },
+                              autofocus: false,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                contentPadding: EdgeInsets.only(bottom: 4),
+                                  suffixIcon: IconButton(
+                                    onPressed: (){
+                                      EventProvider.loadEvents();
+                                      FocusScope.of(context).unfocus();
+                                      searchIsClicked=false;
+                                      searchController.clear;
+                                      searchController.text ="";
+                                    },
+                                    icon: Icon(Icons.clear,color: searchIsClicked ? Colors.grey : Colors.transparent,),
+                                  ),
+                                prefixIcon: Icon(Icons.search_rounded,),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25)
+
+                                )
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                          child: IconButton(
+                            padding: EdgeInsets.only(right: 10,left: 3),
+                              onPressed: (){},
+                              icon: Icon(Icons.filter_list_alt,
+                                color: Color(0xFF454545),
+                              size: 30,)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 FutureBuilder(
                     future: getUserLocation(),
                     builder: (BuildContext context,AsyncSnapshot snapshot){
@@ -185,217 +264,217 @@ class _HomePageState extends State<HomePage> {
                       }
                       return Text("Locating your city....");
                 }),
-             AnimatedOpacity(
-                 duration: const Duration(milliseconds: 300),
-                 opacity: closeTopContainer?0:1,
-               child: AnimatedContainer(
-                 alignment: Alignment.topCenter,
-                  width: size.width,
-                 height: closeTopContainer?0:200,
-                 duration: Duration(milliseconds: 70),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Padding(
-                       padding: const EdgeInsets.only(top: 3, left: 15, bottom: 3),
-                       child: Text('Recommended',
-                           textAlign: TextAlign.start,
-                           style: TextStyle(color: Colors.black,)
-                       ),
-                     ),
-                     Container(
-                       height: 160,
-                          // child: FutureBuilder(
-                          //   future: getEvents(),
-                          //   builder: (context, AsyncSnapshot snapshot) {
-                          //     if (snapshot.hasData) {
-                          //       return Flexible(
-                              child: ListView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  clipBehavior: Clip.none,
-                                scrollDirection: Axis.horizontal,
-                                  itemCount: EventProvider.recommendedEvents.length,
-                                  itemBuilder: (context, index) {
-                                    return
-                                      FittedBox(
-                                        fit: BoxFit.fitWidth,
-                                        alignment: Alignment.topCenter,
-                                        child: Card(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15)
-                                          ),
-                                          margin: EdgeInsets.only(left: 15),
-                                          elevation: 2,
-                                          child: GestureDetector(
-                                            child: Container(
-                                              margin: const EdgeInsets.all(0),
-                                                height: 170,
-                                                width: 250,
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 130,
-                                                      child: Stack(
-                                                        // fit: StackFit.
-                                                        children: [
-                                                          ClipRRect(
-                                                            borderRadius: const BorderRadius
-                                                                .only(
-                                                              topLeft: Radius
-                                                                  .circular(
-                                                                  15.0),
-                                                              topRight: Radius
-                                                                  .circular(
-                                                                  15.0),
-                                                              // bottomRight: Radius
-                                                              //     .circular(25.0),
-                                                              // bottomLeft: Radius
-                                                              //     .circular(25.0),
-                                                            ),
-                                                            child: SizedBox(
-                                                              height: 130,
-                                                              width: 250,
-                                                              child: Image(
-                                                                image:
-                                                                // Image
-                                                                //     .network(
-                                                                //     EventProvider
-                                                                //         .events[index]
-                                                                //         .photoUrl!)
-                                                                //     .image,
-                                                                Image.asset("assets/people.png").image,
-                                                                fit: BoxFit.cover,
-                                                                color: Colors.black54
-                                                                    .withOpacity(0.1),
-                                                                colorBlendMode: BlendMode
-                                                                    .colorBurn,
-                                                                frameBuilder: (
-                                                                    BuildContext context,
-                                                                    Widget child,
-                                                                    int? frame,
-                                                                    bool wasSynchronouslyLoaded) {
-                                                                  if (wasSynchronouslyLoaded ||
-                                                                      frame != null) {
-                                                                    return Container(
-                                                                      child: child,
-                                                                      foregroundDecoration: const BoxDecoration(
-                                                                          gradient: LinearGradient(
-                                                                              begin: Alignment
-                                                                                  .topCenter,
-                                                                              end: Alignment
-                                                                                  .bottomCenter,
-                                                                              colors: [
-                                                                                Color(
-                                                                                    0xBE000000),
-                                                                                Color(
-                                                                                    0x00000000),
-                                                                                Color(
-                                                                                    0x00000000),
-
-                                                                                Color(
-                                                                                    0xA6000000),
-                                                                                Color(
-                                                                                    0xD5000000),
-                                                                              ]
-                                                                          )
-                                                                      ),
-                                                                      height: 140,
-                                                                      width: double
-                                                                          .infinity,
-                                                                    );
-                                                                  } else {
-                                                                    return Container(
-                                                                      child: CircularProgressIndicator(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          value: null,
-                                                                          backgroundColor: Colors
-                                                                              .white),
-                                                                      alignment: Alignment(
-                                                                          0, 0),
-                                                                      constraints: BoxConstraints
-                                                                          .expand(),
-                                                                    );
-                                                                  }
-                                                                },
-                                                                // loadingBuilder: (BuildContext context, Widget child,
-                                                                // ImageChunkEvent? loadingProgress) {
-                                                                // if (loadingProgress == null) {
-                                                                // return child;
-                                                                // }
-                                                                // return Center(
-                                                                // child: CircularProgressIndicator(
-                                                                //       value: loadingProgress.expectedTotalBytes != null
-                                                                //       ? loadingProgress.cumulativeBytesLoaded /
-                                                                //       loadingProgress.expectedTotalBytes!
-                                                                //           : null,),
-                                                                //     );}),
-                                                              ),
-                                                            ),
-                                                          ),
-
-                                                          Positioned(
-                                                            bottom: 15,
-                                                            left: 13,
-                                                            right: 20,
-                                                            child: Text(EventProvider
-                                                                .events[index].title!,
-                                                              style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontSize: 15,
-                                                                  fontWeight: FontWeight
-                                                                      .w800,
-                                                                  fontFamily: "Lato"),),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      height: 30,
-                                                      margin: EdgeInsets.all(0),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius
-                                                              .circular(25)),
+                  if (!searchIsClicked) AnimatedOpacity(
+                       duration: const Duration(milliseconds: 300),
+                       opacity: closeTopContainer?0:1,
+                     child: AnimatedContainer(
+                       alignment: Alignment.topCenter,
+                        width: size.width,
+                       height: closeTopContainer?0:200,
+                       duration: Duration(milliseconds: 70),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Padding(
+                             padding: const EdgeInsets.only(top: 3, left: 15, bottom: 3),
+                             child: Text('Recommended',
+                                 textAlign: TextAlign.start,
+                                 style: TextStyle(color: Colors.black,)
+                             ),
+                           ),
+                           Container(
+                             height: 160,
+                                // child: FutureBuilder(
+                                //   future: getEvents(),
+                                //   builder: (context, AsyncSnapshot snapshot) {
+                                //     if (snapshot.hasData) {
+                                //       return Flexible(
+                                    child: ListView.builder(
+                                        physics: BouncingScrollPhysics(),
+                                        clipBehavior: Clip.none,
+                                      scrollDirection: Axis.horizontal,
+                                        itemCount: EventProvider.recommendedEvents.length,
+                                        itemBuilder: (context, index) {
+                                          return
+                                            FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              alignment: Alignment.topCenter,
+                                              child: Card(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(
+                                                        15)
+                                                ),
+                                                margin: EdgeInsets.only(left: 15),
+                                                elevation: 2,
+                                                child: GestureDetector(
+                                                  child: Container(
+                                                    margin: const EdgeInsets.all(0),
+                                                      height: 170,
+                                                      width: 250,
                                                       child: Column(
                                                         children: [
-                                                          Row(
-                                                            children: [
-                                                              // Icon(Icons.)
-                                                              Text("enf"
-                                                              ),
-                                                            ],
+                                                          SizedBox(
+                                                            height: 130,
+                                                            child: Stack(
+                                                              // fit: StackFit.
+                                                              children: [
+                                                                ClipRRect(
+                                                                  borderRadius: const BorderRadius
+                                                                      .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                        15.0),
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                        15.0),
+                                                                    // bottomRight: Radius
+                                                                    //     .circular(25.0),
+                                                                    // bottomLeft: Radius
+                                                                    //     .circular(25.0),
+                                                                  ),
+                                                                  child: SizedBox(
+                                                                    height: 130,
+                                                                    width: 250,
+                                                                    child: Image(
+                                                                      image:
+                                                                      // Image
+                                                                      //     .network(
+                                                                      //     EventProvider
+                                                                      //         .recommendedEvents[index]
+                                                                      //         .photoUrl!)
+                                                                      //     .image,
+                                                                      Image.asset("assets/people.png").image,
+                                                                      fit: BoxFit.cover,
+                                                                      color: Colors.black54
+                                                                          .withOpacity(0.1),
+                                                                      colorBlendMode: BlendMode
+                                                                          .colorBurn,
+                                                                      frameBuilder: (
+                                                                          BuildContext context,
+                                                                          Widget child,
+                                                                          int? frame,
+                                                                          bool wasSynchronouslyLoaded) {
+                                                                        if (wasSynchronouslyLoaded ||
+                                                                            frame != null) {
+                                                                          return Container(
+                                                                            child: child,
+                                                                            foregroundDecoration: const BoxDecoration(
+                                                                                gradient: LinearGradient(
+                                                                                    begin: Alignment
+                                                                                        .topCenter,
+                                                                                    end: Alignment
+                                                                                        .bottomCenter,
+                                                                                    colors: [
+                                                                                      Color(
+                                                                                          0xBE000000),
+                                                                                      Color(
+                                                                                          0x00000000),
+                                                                                      Color(
+                                                                                          0x00000000),
+
+                                                                                      Color(
+                                                                                          0xA6000000),
+                                                                                      Color(
+                                                                                          0xD5000000),
+                                                                                    ]
+                                                                                )
+                                                                            ),
+                                                                            height: 140,
+                                                                            width: double
+                                                                                .infinity,
+                                                                          );
+                                                                        } else {
+                                                                          return Container(
+                                                                            child: CircularProgressIndicator(
+                                                                                color: Colors
+                                                                                    .grey,
+                                                                                value: null,
+                                                                                backgroundColor: Colors
+                                                                                    .white),
+                                                                            alignment: Alignment(
+                                                                                0, 0),
+                                                                            constraints: BoxConstraints
+                                                                                .expand(),
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      // loadingBuilder: (BuildContext context, Widget child,
+                                                                      // ImageChunkEvent? loadingProgress) {
+                                                                      // if (loadingProgress == null) {
+                                                                      // return child;
+                                                                      // }
+                                                                      // return Center(
+                                                                      // child: CircularProgressIndicator(
+                                                                      //       value: loadingProgress.expectedTotalBytes != null
+                                                                      //       ? loadingProgress.cumulativeBytesLoaded /
+                                                                      //       loadingProgress.expectedTotalBytes!
+                                                                      //           : null,),
+                                                                      //     );}),
+                                                                    ),
+                                                                  ),
+                                                                ),
+
+                                                                Positioned(
+                                                                  bottom: 15,
+                                                                  left: 13,
+                                                                  right: 20,
+                                                                  child: Text(EventProvider
+                                                                      .recommendedEvents[index].title!,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight
+                                                                            .w800,
+                                                                        fontFamily: "Lato"),),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            height: 30,
+                                                            margin: EdgeInsets.all(0),
+                                                            decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius
+                                                                    .circular(25)),
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    // Icon(Icons.)
+                                                                    Text("enf"
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )),
-                                            onTap: () {
-                                              Get.to(EventPage(
-                                                  event: EventProvider
-                                                      .events[index]));
-                                            },
+                                                      )),
+                                                  onTap: () {
+                                                    Get.to(EventPage(
+                                                        event: EventProvider
+                                                            .recommendedEvents[index]));
+                                                  },
 
-                                          )
-                                    ),
-                                      );
+                                                )
+                                          ),
+                                            );
 
-                                  })
+                                        })
 
-                               ),
-                   ],
-                 ),
-               ),
-             ),
+                                     ),
+                         ],
+                       ),
+                     ),
+                   ),
                     // Divider(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3,bottom: 3, left: 15),
-                      child: Text('All',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(color: Colors.black,)
-                      ),
-                    ),
+                 if (!searchIsClicked) Padding(
+                  padding: EdgeInsets.only(top: 3,bottom: 3, right: 340),
+                  child: Text('All',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.black,)
+                  ),
+                ),
                 Flexible(
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -440,9 +519,8 @@ class _HomePageState extends State<HomePage> {
                                                   child: Image(
                                                     image:
                                                     // Image
-                                                    //     .network(
-                                                    //     EventProvider
-                                                    //         .events[index]
+                                                    //     .network(EventProvider.
+                                                    //          events[index]
                                                     //         .photoUrl!)
                                                     //     .image,
                                                     Image.asset("assets/people.png").image,
@@ -505,8 +583,7 @@ class _HomePageState extends State<HomePage> {
                                                 bottom: 15,
                                                 left: 13,
                                                 right: 20,
-                                                child: Text(EventProvider
-                                                    .events[index].title!,
+                                                child: Text(EventProvider.events![index].title!,
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 17,
@@ -530,8 +607,7 @@ class _HomePageState extends State<HomePage> {
                                       )),
                                   onTap: () {
                                     Get.to(EventPage(
-                                        event: EventProvider
-                                            .events[index]));
+                                        event: events![index]));
                                   },
 
                                 )
@@ -567,6 +643,9 @@ class _HomePageState extends State<HomePage> {
 
 
     );
+
+    
+
   }
 
   // Future getEvents() async {
@@ -578,9 +657,6 @@ class _HomePageState extends State<HomePage> {
 
 Future<dynamic> getUserLocation() async {
   currentLocation = await locateUser();
-  setState(() {
-    _center = LatLng(currentLocation!.latitude, currentLocation!.longitude);
-  });
   try {
     // Geolocator geolocator = Geolocator();
     List<Placemark> p = await placemarkFromCoordinates(
@@ -611,5 +687,6 @@ Future<Position> locateUser() async {
   return Geolocator
       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
+
 
 }

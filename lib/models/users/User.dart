@@ -6,7 +6,7 @@ class UserModel {
   String? fullName;
   String? userName;
   String? photoURL;
-  Array? category;
+  List<dynamic> category =[];
 
 
   UserModel({this.uid, this.email, this.fullName, this.userName,this.photoURL});

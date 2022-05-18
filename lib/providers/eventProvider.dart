@@ -7,7 +7,7 @@ class eventProvider extends ChangeNotifier{
   EventController eventController = EventController();
   List<Event> events =[];
   List<Event> recommendedEvents =[];
-
+  // List<Event> searchedEvents=[];
 
 
   eventProvider.initialize(){
@@ -19,5 +19,9 @@ class eventProvider extends ChangeNotifier{
     recommendedEvents = await eventController.getRecommendedEvents();
     notifyListeners();
   }
+
+  // searchEventByName(){
+  //
+  // }
 
 }

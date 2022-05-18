@@ -157,8 +157,8 @@ class _addEventState extends State<addEvent> {
   @override
   Widget build(BuildContext context) {
 
-    List<String> categoryList = ["computer science","biology","art","music",
-      "medicine","electronics","studies","concert","conference"];
+    List<String> categoryList = ["Informatique","Biologie","Mathématiques","Physique","Chimie","Économie",
+      "Électronique","Histoire-géographie","Géopolitique","Sciences politiques","littérature","philosophie","Art","music","medicine","electronics","studies","concert","conference"];
 
 
    void openFilterDialog(BuildContext context) async {
