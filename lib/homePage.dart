@@ -214,8 +214,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 prefixIcon: Icon(Icons.search_rounded,),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25)
-
+                                  borderRadius: BorderRadius.circular(25),
                                 )
                               ),
                             ),
