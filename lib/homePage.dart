@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:latlng/latlng.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'confidentialite.dart';
@@ -39,6 +38,8 @@ class _HomePageState extends State<HomePage> {
 
 
 
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -57,6 +58,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<String> categoryList = ["Informatique","Biologie","Mathématiques","Physique","Chimie","Économie",
+      "Électronique","Histoire-géographie","Géopolitique","Sciences politiques","littérature","philosophie","Art","music","medicine","electronics","studies","concert","conference"];
+
 
     final EventProvider = Provider.of<eventProvider>(context);
     final Size size = MediaQuery.of(context).size;
@@ -224,7 +229,51 @@ class _HomePageState extends State<HomePage> {
                           width: 20,
                           child: IconButton(
                             padding: EdgeInsets.only(right: 10,left: 3),
-                              onPressed: (){},
+                              onPressed: (){
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: <Widget>[
+                                            Positioned(
+                                              right: -40.0,
+                                              top: -40.0,
+                                              child: InkResponse(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: CircleAvatar(
+                                                  child: Icon(Icons.close),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                                  child:Column(
+                                                    children: [
+                                                      SingleChildScrollView(
+                                                        child: Wrap(
+                                                            children:
+                                                            categoryList.map((String e) =>
+                                                                Padding(
+                                                                  padding: const EdgeInsets.all(8),
+                                                                  child: FilterChip(
+                                                                    label: Text(e),
+                                                                    onSelected: (isSelected) {  },
+                                                                  ),
+                                                                )).toList()
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    });
+                              },
                               icon: Icon(Icons.filter_list_alt,
                                 color: Color(0xFF454545),
                               size: 30,)),
@@ -582,7 +631,7 @@ class _HomePageState extends State<HomePage> {
                                                 bottom: 15,
                                                 left: 13,
                                                 right: 20,
-                                                child: Text(EventProvider.events![index].title!,
+                                                child: Text(EventProvider.events[index].title!,
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 17,
@@ -606,7 +655,7 @@ class _HomePageState extends State<HomePage> {
                                       )),
                                   onTap: () {
                                     Get.to(EventPage(
-                                        event: events![index]));
+                                        event: EventProvider.events[index]));
                                   },
 
                                 )
@@ -636,7 +685,8 @@ class _HomePageState extends State<HomePage> {
                             // ),
                           })
                   ),
-                )]
+                ),
+              ]
           ),
         )
 
@@ -686,6 +736,7 @@ Future<Position> locateUser() async {
   return Geolocator
       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
+
 
 
 }
