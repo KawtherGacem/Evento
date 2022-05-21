@@ -1,5 +1,6 @@
 import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +11,7 @@ import 'confidentialite.dart';
 import 'contact.dart';
 import 'controllers/loginController.dart';
 import 'eventPage.dart';
+import 'headerDrawer.dart';
 import 'login.dart';
 import 'models/Event.dart';
 import 'myOwnEvent.dart';
@@ -78,23 +80,23 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Color(0xffececf5),
         key: _scaffoldKey,
         drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.all(0),
-              children: [
+          child: ListView(
+            padding: EdgeInsets.all(0),
+            children: [
               Column(
-              children: [
-              ProfileScreen(),
+                children: [
+                  HeaderDrawer(),
 
                 ],
                 ),
                 SizedBox(height: 20),
                 ListTile(
-                title: Text('Mes evenements',
+                title: Text('Profile',
                 style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 16,),
                 ),
                 leading: Icon(Icons.my_library_books_outlined,color: Colors.deepPurpleAccent,),
                 onTap: (){
-                Get.to(MyOwnEvent());
+                Get.to(ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid,));
                 },
           ),
                 SizedBox(height: 20),
