@@ -106,7 +106,7 @@ class _LoginState extends State<Login> {
 
     return ScreenUtilInit(
           designSize: const Size(1080,2280),
-          builder: (_) {
+          builder: (_,widget) {
             return Scaffold(
               resizeToAvoidBottomInset:false,
               body: SingleChildScrollView(

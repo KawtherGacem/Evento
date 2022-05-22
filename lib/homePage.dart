@@ -2,6 +2,8 @@ import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:evetoapp/filterChip.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
@@ -35,6 +37,11 @@ class _HomePageState extends State<HomePage> {
   bool searchIsClicked= false;
 
   TextEditingController searchController =TextEditingController();
+
+  bool selected =false;
+
+  List<String> selectedCategoriesList =[];
+
 
 
 
@@ -233,45 +240,105 @@ class _HomePageState extends State<HomePage> {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Stack(
-                                          clipBehavior: Clip.none,
-                                          children: <Widget>[
-                                            Positioned(
-                                              right: -40.0,
-                                              top: -40.0,
-                                              child: InkResponse(
-                                                onTap: () {
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                        return AlertDialog(
+                                          actions: [
+                                             Material(
+                                              elevation: 2,
+                                              borderRadius: BorderRadius.circular(30),
+                                              color: const Color(0xFF513ADA),
+                                              child: MaterialButton(
+                                                minWidth: MediaQuery.of(context).size.width/3,
+                                                height: 20,
+                                                onPressed: (){
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: CircleAvatar(
-                                                  child: Icon(Icons.close),
-                                                  backgroundColor: Colors.red,
-                                                ),
+                                                child: Text("Appliquer",textAlign: TextAlign.center,style: TextStyle(
+                                                    fontSize:17 ,color: const Color(0xFFFFFFFF),fontWeight: FontWeight.bold,
+                                                )),
                                               ),
                                             ),
-                                            Container(
-                                                  child:Column(
-                                                    children: [
-                                                      SingleChildScrollView(
-                                                        child: Wrap(
-                                                            children:
-                                                            categoryList.map((String e) =>
-                                                                Padding(
-                                                                  padding: const EdgeInsets.all(8),
-                                                                  child: FilterChip(
-                                                                    label: Text(e),
-                                                                    onSelected: (isSelected) {  },
-                                                                  ),
-                                                                )).toList()
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                            )
                                           ],
-                                        ),
-                                      );
+                                          title: Text("Filtrer"),
+                                          scrollable: true,
+                                          content: Stack(
+                                            clipBehavior: Clip.none,
+                                            children: <Widget>[
+                                              Positioned(
+                                                right: -40.0,
+                                                top: -40.0,
+                                                child: InkResponse(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: CircleAvatar(
+                                                    child: Icon(Icons.close),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 18),
+                                                    alignment:Alignment.bottomLeft,
+                                                    child: Text("Categories",style: TextStyle(fontSize: 17),),
+                                                  ),
+                                                  Divider(color: Colors.grey,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 300,
+                                                    child: SingleChildScrollView(
+                                                      child: FilterChips(categories: categoryList,onSelectionChanged: (selectedList) {
+                                                        setState(() {
+                                                          selectedCategoriesList = selectedList;
+                                                        });
+                                                      },),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              // Container(
+                                              //       child:Column(
+                                              //         children: [
+                                              //           Container(
+                                              //             padding: EdgeInsets.only(left: 18),
+                                              //             alignment:Alignment.bottomLeft,
+                                              //             child: Text("Categories",style: TextStyle(fontSize: 17),),
+                                              //           ),
+                                              //           Divider(color: Colors.grey,
+                                              //           ),
+                                              //           SizedBox(
+                                              //             height:300,
+                                              //             child: SingleChildScrollView(
+                                              //               physics: BouncingScrollPhysics(),
+                                              //               scrollDirection: Axis.vertical,
+                                              //               child: Wrap(
+                                              //                   children:
+                                              //                   categoryList.map((String e) =>
+                                              //                       Padding(
+                                              //                         padding: const EdgeInsets.all(8),
+                                              //                         child: FilterChip(
+                                              //                           selected: selected,
+                                              //                           selectedColor: Color(0xFF513ADA),
+                                              //                           pressElevation: 10,
+                                              //                           label: Text(e),
+                                              //                           onSelected: (isSelected) {
+                                              //                             selectChip(e,isSelected);
+                                              //                           },
+                                              //                         ),
+                                              //                       )).toList()
+                                              //               ),
+                                              //             ),
+                                              //           )
+                                              //         ],
+                                              //       ),
+                                              // )
+                                            ],
+                                          ),
+                                        );
+                                        });
                                     });
                               },
                               icon: Icon(Icons.filter_list_alt,
@@ -736,6 +803,8 @@ Future<Position> locateUser() async {
   return Geolocator
       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
+
+  void selectChip(String e, bool isSelected) {}
 
 
 
