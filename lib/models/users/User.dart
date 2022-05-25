@@ -6,17 +6,10 @@ class UserModel {
   String? fullName;
   String? userName;
   String? photoURL;
-  List<dynamic> category =[];
+  List<dynamic> category=[];
 
 
-  UserModel({this.uid, this.email, this.fullName, this.userName,this.photoURL});
-
-  String? get _uid => uid;
-  String? get _email  => email;
-  String? get _fullName => fullName;
-  String? get _userName => userName;
-  String? get _photoURL => photoURL;
-
+  UserModel({this.uid, this.email, this.fullName, this.userName,this.photoURL,});
 
 
   //
@@ -29,22 +22,25 @@ class UserModel {
   //   );
   // }
 
-  Map<String,dynamic> toMap(){
-    return {
-      'uid': uid,
-      'email': email,
-      'fullName': fullName,
-      'userName': userName
-    };
-  }
-
-
-  // UserModel.fromJson(Map<String,dynamic> json){
-  //   firstName = json["firstname"];
-  //   lastName = json["lastName"];
-  //   email = json["email"];
-  //   photoURL = json["photoURL"];
+  // Map<String,dynamic> toMap(){
+  //   return {
+  //     'uid': uid,
+  //     'email': email,
+  //     'fullName': fullName,
+  //     'userName': userName
+  //   };
   // }
+
+
+  UserModel.fromJson(Map<String,dynamic>? json){
+    fullName = json!["fullName"];
+    userName = json["userName"];
+    email = json["email"];
+    photoURL = json["photo"];
+    email =json["email"];
+    category=json["category"];
+    uid=json["uid"];
+  }
 
   // Map<String,dynamic> toJson(){
   //   final Map<String,dynamic> data = new Map<String,dynamic>();

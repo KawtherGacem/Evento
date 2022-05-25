@@ -1,35 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/controllers/userController.dart';
 import 'package:evetoapp/editeProfile.dart';
+import 'package:evetoapp/models/users/User.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String uid;
-  const ProfileScreen({Key? key, required this.uid}) : super(key: key);
+  const ProfileScreen({Key? key, required String uid}) :
+        _uid =uid,
+        super(key: key);
+
+  final String _uid;
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-  var userData = {};
-
-
+  UserController userController=UserController();
+  UserModel user =UserModel();
+  bool? isUserProfile;
   @override
-  void initState() {
+  initState()  {
+    getData().then((value) => user =value);
     super.initState();
-    getData();
   }
-  getData() async {
+  Future<UserModel> getData() async {
     try {
-      var snap= await FirebaseFirestore.instance.collection('users').doc(widget.uid).get();
-      userData = snap.data()!;
+      user = await userController.GetUser(widget._uid);
+      print(user.fullName??"");
+      // var snap= await FirebaseFirestore.instance.collection('users').doc(widget._uid).get();
+      // userData = snap.data()!;
       setState(() {
+        print(user.uid);
+        print(widget._uid);
+        isUserProfile = (user.uid==widget._uid);
+        print(isUserProfile);
 
       });
     }
-    catch (e) {
+    catch (e) {print(e);
     }
+    return user;
   }
 
   @override
@@ -38,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        title: Text(userData['fullName'],
+        title: Text(user.fullName??"",
           style:
           TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
@@ -69,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    userData['fullName'],
+                                    user.fullName??"",
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w700,
@@ -111,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(top: 15,),
-                    child: Text(userData['fullName'], style: TextStyle(
+                    child: Text(user.fullName??"", style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),),
                   ),

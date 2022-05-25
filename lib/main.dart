@@ -1,5 +1,6 @@
 import 'package:evetoapp/controllers/loginController.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
+import 'package:evetoapp/providers/userProvider.dart';
 import "package:firebase_core/firebase_core.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +13,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: eventProvider.initialize())],
+      providers: [
+        ChangeNotifierProvider.value(value: eventProvider.initialize()),
+      ],
       child: MyApp()));
 }
 
