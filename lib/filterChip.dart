@@ -14,15 +14,18 @@ class FilterChips extends StatefulWidget {
 
 class _FilterChipsState extends State<FilterChips> {
   List<String> selectedChoices = [];
-  bool isSelected = false;
 
   _buildChoiceList() {
     List<Widget> choices = [];
     widget._categories.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
-        child: ChoiceChip(
+        child: FilterChip(
+          selectedColor: Color(0xFF513ADA),
           label: Text(item),
+          checkmarkColor: Colors.white,
+          labelStyle: TextStyle(color: selectedChoices.contains(item)?Colors.white:Colors.black,),
+          showCheckmark: selectedChoices.contains(item),
           selected: selectedChoices.contains(item),
           onSelected: (selected) {
             setState(() {

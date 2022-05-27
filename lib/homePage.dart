@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:evetoapp/filterChip.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
@@ -42,6 +43,8 @@ class _HomePageState extends State<HomePage> {
   bool selected = false;
 
   List<String> selectedCategoriesList = [];
+
+  bool isFilter=false;
 
   @override
   void initState() {
@@ -84,7 +87,7 @@ class _HomePageState extends State<HomePage> {
 
     final EventProvider = Provider.of<eventProvider>(context);
     final Size size = MediaQuery.of(context).size;
-    List<Event>? events = EventProvider.events;
+
     void searchEvent(String query) {
       if (query.isEmpty) {
         EventProvider.loadEvents();
@@ -95,9 +98,19 @@ class _HomePageState extends State<HomePage> {
             .toList();
       }
     }
-
     ;
-
+    void filterEvents(List<String> selectedCategories){
+      if (selectedCategories.isEmpty) {
+        Fluttertoast.showToast(msg: "aucun filtre n'été selectionné");
+        EventProvider.loadEvents();
+      } else {
+        EventProvider.events = EventProvider.events
+            .where((event) =>
+            selectedCategories.every((element) => event.category.contains(element)))
+            .toList();
+        print(EventProvider.events);
+      }
+    }
     return Scaffold(
         backgroundColor: Color(0xffececf5),
         key: _scaffoldKey,
@@ -216,18 +229,17 @@ class _HomePageState extends State<HomePage> {
                 color: Color(0xFF513ADA),
                 size: 35,
               ),
-              onPressed: () {
-
-              },
+              onPressed: () {},
             ),
           ],
         ),
         body: RefreshIndicator(
+          semanticsLabel: "rafraîchir",
           onRefresh: () async {
-            // events= await EventProvider.loadEvents();
             return await EventProvider.loadEvents();
           },
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
+          child: Column(
+              mainAxisSize: MainAxisSize.min, children: [
             Container(
               height: 50,
               width: 390,
@@ -284,12 +296,24 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(
                       width: 20,
-                      child: IconButton(
+                      child:isFilter?IconButton(
+                        padding: EdgeInsets.only(right: 5),
+                          onPressed: (){
+                            EventProvider.loadEvents();
+                            selectedCategoriesList.clear();
+                            isFilter=false;
+                            },
+                          icon: Icon(
+                            Icons.close,
+                            color: Color(0xFF454545),
+                            size: 30,
+                          ))
+                          : IconButton(
                           padding: EdgeInsets.only(right: 10, left: 3),
                           onPressed: () {
                             showDialog(
                                 context: context,
-                                builder: (BuildContext context) {
+                                builder: (BuildContext dialogContext) {
                                   return StatefulBuilder(
                                       builder: (context, setState) {
                                     return AlertDialog(
@@ -306,7 +330,9 @@ class _HomePageState extends State<HomePage> {
                                                 3,
                                             height: 20,
                                             onPressed: () {
-                                              Navigator.of(context).pop();
+                                              isFilter=true;
+                                              filterEvents(selectedCategoriesList);
+                                              Navigator.of(context, rootNavigator: true).pop();
                                             },
                                             child: Text("Appliquer",
                                                 textAlign: TextAlign.center,
@@ -458,7 +484,7 @@ class _HomePageState extends State<HomePage> {
                   }
                   return Text("Locating your city....");
                 }),
-            if (!searchIsClicked)
+            if (!searchIsClicked && !isFilter )
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 300),
                 opacity: closeTopContainer ? 0 : 1,

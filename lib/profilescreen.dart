@@ -36,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         print(widget._uid);
         isUserProfile = (user.uid==widget._uid);
         print(isUserProfile);
-
       });
     }
     catch (e) {print(e);
