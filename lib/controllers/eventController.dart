@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import '../models/users/User.dart';
 
 class EventController{
+  bool isLiked =false;
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<List<Event>> getEvents() async{
@@ -45,6 +47,31 @@ class EventController{
     print(user.category);
     return user.category;
 
+  }
+
+  bool isUserFavorite(String? id){
+    bool? isLiked=false;
+    List<dynamic> likes=[];
+    void get() async {
+      await firestore.collection("events").doc(id!).get().then((value) {
+        if(value.data()?["likes"]!=null)
+          likes = value.data()!["likes"];});
+
+      if (likes.isNotEmpty){
+        if (likes.contains(FirebaseAuth.instance.currentUser!.uid)){
+          isLiked=true;
+          // print(isLiked);
+          // print(likes);
+        }else{
+          isLiked =false;
+        }
+      }else {
+        isLiked=false;
+      }
+    };
+    get();
+    print(isLiked);
+    return isLiked!;
   }
 
 

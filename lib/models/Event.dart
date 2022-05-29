@@ -15,9 +15,10 @@ class Event {
   Map<String,dynamic>? eventLocation;
   String? inscriptionUrl;
   List<dynamic> category=[];
+  List<dynamic> likes=[];
 
 
-  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.startingDate, this.endingDate , this.eventLocation, this.inscriptionUrl);
+  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.startingDate, this.endingDate , this.eventLocation, this.inscriptionUrl,this.likes);
 
   Event.fromJson(Map<String,dynamic> json){
     id =json["id"];
@@ -32,5 +33,6 @@ class Event {
     endingDate= json["endingDate"];
     eventLocation= json["eventLocation"];
     inscriptionUrl=json["inscriptionUrl"];
+    likes=json["likes"];
   }
 }

@@ -2,6 +2,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/homePage.dart';
 import 'package:evetoapp/models/users/User.dart';
+import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,8 +27,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
 
   late User _user;
-  bool _isSigningOut = false;
-
   int selectedIndex = 0;
 
   @override
@@ -61,7 +60,8 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void onItemTapped(int index) async{
-
+    final EventProvider = Provider.of<eventProvider>(context,listen: false);
+    EventProvider.loadEvents();
     selectedIndex = index;
     setState(() { });
 }

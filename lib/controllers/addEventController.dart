@@ -3,6 +3,7 @@ import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/models/users/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class addEventController {
@@ -26,9 +27,15 @@ class addEventController {
           "eventLocation":eventLocation.data,
           "photoUrl":downLoadUrl,
           "category" : list,
-          "inscriptionUrl": inscriptionUrl
+          "inscriptionUrl": inscriptionUrl,
+          "likes":[]
+
         }).then((value){
       print(value.id);
+      firestoreInstance
+          .collection("events")
+          .doc(value.id)
+          .set({"id":value.id},SetOptions(merge: true));
     });
     }
   }

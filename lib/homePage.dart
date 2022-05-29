@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/controllers/eventController.dart';
 import 'package:evetoapp/profilescreen.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
+import 'package:favorite_button/favorite_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'confidentialite.dart';
 import 'contact.dart';
@@ -202,11 +206,10 @@ class _HomePageState extends State<HomePage> {
             icon: CircleAvatar(
               radius: 15,
               backgroundImage:
-                  // Image
-                  //     .network(
-                  //   _auth.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
-                  //     .image,
-                  Image.asset("assets/people.png").image,
+                  Image
+                      .network(
+                    FirebaseAuth.instance.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
+                      .image,
             ),
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
           ),
@@ -559,14 +562,11 @@ class _HomePageState extends State<HomePage> {
                                                           width: 250,
                                                           child: Image(
                                                             image:
-                                                                // Image
-                                                                //     .network(
-                                                                //     EventProvider
-                                                                //         .recommendedEvents[index]
-                                                                //         .photoUrl!)
-                                                                //     .image,
-                                                                Image.asset(
-                                                                        "assets/people.png")
+                                                                Image
+                                                                    .network(
+                                                                    EventProvider
+                                                                        .recommendedEvents[index]
+                                                                        .photoUrl!)
                                                                     .image,
                                                             fit: BoxFit.cover,
                                                             color: Colors
@@ -700,7 +700,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             // Divider(),
-            if (!searchIsClicked)
+            if (!searchIsClicked && !isFilter )
               Padding(
                 padding: EdgeInsets.only(top: 3, bottom: 3, right: 340),
                 child: Text('All',
@@ -746,14 +746,12 @@ class _HomePageState extends State<HomePage> {
                                               width: 372,
                                               child: Image(
                                                 image:
-                                                    // Image
-                                                    //     .network(EventProvider.
-                                                    //          events[index]
-                                                    //         .photoUrl!)
-                                                    //     .image,
-                                                    Image.asset(
-                                                            "assets/people.png")
+                                                    Image
+                                                        .network(EventProvider.
+                                                             events[index]
+                                                            .photoUrl!)
                                                         .image,
+
                                                 fit: BoxFit.cover,
                                                 color: Colors.black54
                                                     .withOpacity(0.1),
@@ -818,6 +816,16 @@ class _HomePageState extends State<HomePage> {
                                                   fontFamily: "Lato"),
                                             ),
                                           ),
+                                          Positioned(
+                                              child: LikeButton(
+                                                isLiked:EventProvider.events[index].likes.contains(FirebaseAuth.instance.currentUser!.uid),
+                                                onTap : (isLiked) async {
+                                                  final success = await addToFavorites(EventProvider.events[index].id,isLiked);
+                                                  EventProvider.loadEvents();
+                                                  return !isLiked;
+
+                                                },
+                                              ))
                                         ],
                                       ),
                                       Container(
@@ -905,5 +913,62 @@ class _HomePageState extends State<HomePage> {
         desiredAccuracy: LocationAccuracy.high);
   }
 
-  void selectChip(String e, bool isSelected) {}
+  FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+
+  Future<bool> addToFavorites(String? id, bool isLiked) async {
+    if(!isLiked) {
+      await firestoreInstance
+          .collection("events")
+          .doc(id)
+          .update({
+        "likes": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
+      });
+      await firestoreInstance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({ "favorites": FieldValue.arrayUnion([id])});
+    }else{
+      await firestoreInstance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({ "favorites": FieldValue.arrayRemove([id])});
+      await firestoreInstance
+          .collection("events")
+          .doc(id)
+          .update({
+        "likes": FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+      });
+     }
+    return true;
+  }
+
+  // bool? isUserFavorite(String? id) {
+   //  bool? isLiked;
+   //  List<dynamic> likes=[];
+   //  Event event ;
+   //  Future<Event> get() async {
+   //    await firestoreInstance.collection("events").doc(id!).get().then((value) {
+   //      event = Event.fromJson(value.data()!);
+   //      print(event.title);
+   //      return event;
+   //    });
+   //    return event;
+   //  };
+   // get.then((value) => event=value);
+   //  likes=event.likes;
+   //  if (likes.isNotEmpty){
+   //    if (likes.contains(FirebaseAuth.instance.currentUser!.uid)){
+   //      isLiked=true;
+   //      // print(isLiked);
+   //      // print(likes);
+   //    }else{
+   //      isLiked=false;
+   //    }
+   //  }
+   //  // print(isLiked);
+   //  return isLiked;
+  // }
+
 }
+
+
