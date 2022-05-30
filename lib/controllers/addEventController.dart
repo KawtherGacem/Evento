@@ -10,7 +10,7 @@ class addEventController {
 
   final firestoreInstance = FirebaseFirestore.instance;
 
-   Future<void> addNewEvent(String title,String description,List<String> list,User? user,String downLoadUrl, Timestamp startingDate, Timestamp endingDate, GeoFirePoint eventLocation, String inscriptionUrl) async {
+   Future<void> addNewEvent(String title,String description,List<String> categoryList,List<String> themesList,User? user,String downLoadUrl,Timestamp startingDate,Timestamp endingDate, GeoFirePoint eventLocation, String inscriptionUrl) async {
      var userName,photoUrl;
      await GetUser(user!.uid).then((value) => userName = value.userName);
      await GetUser(user.uid).then((value) => photoUrl = value.photoURL);
@@ -26,10 +26,10 @@ class addEventController {
           "endingDate":endingDate,
           "eventLocation":eventLocation.data,
           "photoUrl":downLoadUrl,
-          "category" : list,
+          "category" : categoryList,
+          "themes":themesList,
           "inscriptionUrl": inscriptionUrl,
-          "likes":[]
-
+          "likes":[""]
         }).then((value){
       print(value.id);
       firestoreInstance

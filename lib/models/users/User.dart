@@ -6,7 +6,7 @@ class UserModel {
   String? fullName;
   String? userName;
   String? photoURL;
-  List<dynamic> category=[];
+  List<dynamic> themes=[];
 
 
   UserModel({this.uid, this.email, this.fullName, this.userName,this.photoURL,});
@@ -38,7 +38,7 @@ class UserModel {
     email = json["email"];
     photoURL = json["photo"];
     email =json["email"];
-    category=json["category"];
+    themes=json["themes"];
     uid=json["uid"];
   }
 

@@ -257,22 +257,22 @@ class _SignUpState extends State<SignUp> {
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "email-already-in-use":
-            errorMessage = "this email address is alredy used.";
+            errorMessage = "ce email est déja utilisé.";
             break;
           case "invalid-email":
-            errorMessage = "Your emmail is invalid.";
+            errorMessage = "votre email est invalide.";
             break;
           case "weak-password":
-            errorMessage = "your password is weak.";
+            errorMessage = "votre mot de passe est faible.";
             break;
           case "too-many-requests":
             errorMessage = "Too many requests";
             break;
           case "operation-not-allowed":
-            errorMessage = "Signing in with Email and Password is not enabled.";
+            errorMessage = "Creation du compte n'est pas autorisé.";
             break;
           default:
-            errorMessage = "An undefined Error happened.";
+            errorMessage = "Error indéfini.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
         print(error.code);
@@ -280,21 +280,8 @@ class _SignUpState extends State<SignUp> {
     }
   }
   postDetailsToFirestore() async {
-    // calling our firestore
-    // calling our user model
-    // sending these values
-
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
-
-    UserModel userModel = UserModel();
-
-    // writing all the values
-    userModel.email = user?.email;
-    userModel.uid = user?.uid;
-    userModel.fullName = fullNameEditingController.text;
-    userModel.userName = userNameEditingController.text;
-
     await firebaseFirestore
         .collection("users")
         .doc(user?.uid)
@@ -304,14 +291,11 @@ class _SignUpState extends State<SignUp> {
         "userName" : userNameEditingController.text,
         "email":user?.email,
         "photo":user?.photoURL,
-        "category" : ["computer science","biology","art"]
+        "themes" : ["Informatique","Biologie","Mathématiques","Physique","Chimie","Économie",
+          "Électronique","Histoire-géographie","Géopolitique","Sciences politiques","littérature","philosophie",
+          "Art","Music","Médicine","Environnement"]
         }).then((_) {
           print(user?.uid);
-          firebaseFirestore
-              .collection("users")
-              .doc(user?.uid)
-              .collection("likedEvents")
-              .add({"eventID": "true"});
         });
     Fluttertoast.showToast(msg: "Account created successfully :) ");
 

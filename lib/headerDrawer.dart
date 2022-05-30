@@ -11,7 +11,7 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Color(0xFF604BE0),
       width: double.infinity,
       height: 200,
       padding: EdgeInsets.only(top: 20.0),
@@ -20,7 +20,7 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 10),
-            height: 70,
+            height: 90,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
@@ -29,13 +29,13 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
             ),
           ),
           Text(
-            "Rapid Tech",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            _auth.currentUser!.displayName ?? "",
+            style: TextStyle(color: Colors.white70, fontSize: 20),
           ),
           Text(
-            "info@rapidtech.dev",
+            _auth.currentUser!.email ?? "",
             style: TextStyle(
-              color: Colors.grey[200],
+              color: Colors.white60,
               fontSize: 14,
             ),
           ),

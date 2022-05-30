@@ -9,17 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:evetoapp/filterChip.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
-import 'confidentialite.dart';
 import 'contact.dart';
 import 'controllers/loginController.dart';
 import 'eventPage.dart';
 import 'headerDrawer.dart';
 import 'login.dart';
+import 'package:intl/intl.dart';
+
 import 'models/Event.dart';
 import 'myOwnEvent.dart';
 
@@ -48,7 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   List<String> selectedCategoriesList = [];
 
-  bool isFilter=false;
+  bool isFilter = false;
 
   @override
   void initState() {
@@ -68,6 +70,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<String> categoryList = [
+      "Concert",
+      "Salon professionnel",
+      "Salon international",
+      "Séminaire",
+      "Congrès",
+      "Conférence",
+      "Spectacle",
+      "Festival",
+      "Team-building",
+      "Événement scientifique",
+      "Événement culturelle",
+      "Événement sportif"
+    ];
+
+    List<String> themesList = [
       "Informatique",
       "Biologie",
       "Mathématiques",
@@ -81,12 +98,10 @@ class _HomePageState extends State<HomePage> {
       "littérature",
       "philosophie",
       "Art",
-      "music",
-      "medicine",
-      "electronics",
-      "studies",
-      "concert",
-      "conference"
+      "Music",
+      "Médicine",
+      "Environnement",
+      "Cuisine"
     ];
 
     final EventProvider = Provider.of<eventProvider>(context);
@@ -102,19 +117,21 @@ class _HomePageState extends State<HomePage> {
             .toList();
       }
     }
+
     ;
-    void filterEvents(List<String> selectedCategories){
+    void filterEvents(List<String> selectedCategories) {
       if (selectedCategories.isEmpty) {
         Fluttertoast.showToast(msg: "aucun filtre n'été selectionné");
         EventProvider.loadEvents();
       } else {
         EventProvider.events = EventProvider.events
-            .where((event) =>
-            selectedCategories.every((element) => event.category.contains(element)))
+            .where((event) => selectedCategories
+                .every((element) => event.category.contains(element)))
             .toList();
         print(EventProvider.events);
       }
     }
+
     return Scaffold(
         backgroundColor: Color(0xffececf5),
         key: _scaffoldKey,
@@ -132,13 +149,14 @@ class _HomePageState extends State<HomePage> {
                 title: Text(
                   'Profile',
                   style: TextStyle(
-                    color: Colors.deepPurpleAccent,
+                    color: Color(0xFF604BE0),
                     fontSize: 16,
                   ),
                 ),
                 leading: Icon(
-                  Icons.my_library_books_outlined,
-                  color: Colors.deepPurpleAccent,
+                  Icons.person,
+                  color: Color(0xFF604BE0),
+                  size: 30,
                 ),
                 onTap: () {
                   Get.to(ProfileScreen(
@@ -149,32 +167,16 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 20),
               ListTile(
                 title: Text(
-                  'Confidentialité et securité',
-                  style: TextStyle(
-                    color: Colors.deepPurpleAccent,
-                    fontSize: 16,
-                  ),
-                ),
-                leading: Icon(
-                  Icons.privacy_tip_outlined,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onTap: () {
-                  Get.to(Confidentialite());
-                },
-              ),
-              SizedBox(height: 20),
-              ListTile(
-                title: Text(
                   'Contact',
                   style: TextStyle(
-                    color: Colors.deepPurpleAccent,
+                    color: Color(0xFF604BE0),
                     fontSize: 16,
                   ),
                 ),
                 leading: Icon(
                   Icons.contact_support_outlined,
-                  color: Colors.deepPurpleAccent,
+                  color: Color(0xFF604BE0),
+                  size: 35,
                 ),
                 onTap: () {
                   Get.to(Contact());
@@ -185,13 +187,14 @@ class _HomePageState extends State<HomePage> {
                 title: Text(
                   'Déconnecter',
                   style: TextStyle(
-                    color: Colors.deepPurpleAccent,
+                    color: Color(0xFF604BE0),
                     fontSize: 16,
                   ),
                 ),
                 leading: Icon(
                   Icons.logout,
-                  color: Colors.deepPurpleAccent,
+                  color: Color(0xFF604BE0),
+                  size: 30,
                 ),
                 onTap: () async {
                   await LoginController.signOut(context: context);
@@ -205,11 +208,10 @@ class _HomePageState extends State<HomePage> {
           leading: IconButton(
             icon: CircleAvatar(
               radius: 15,
-              backgroundImage:
-                  Image
-                      .network(
-                    FirebaseAuth.instance.currentUser?.photoURL ?? "", fit: BoxFit.fitWidth,)
-                      .image,
+              backgroundImage: Image.network(
+                FirebaseAuth.instance.currentUser?.photoURL ?? "",
+                fit: BoxFit.fitWidth,
+              ).image,
             ),
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
           ),
@@ -241,8 +243,7 @@ class _HomePageState extends State<HomePage> {
           onRefresh: () async {
             return await EventProvider.loadEvents();
           },
-          child: Column(
-              mainAxisSize: MainAxisSize.min, children: [
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
               height: 50,
               width: 390,
@@ -299,152 +300,160 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(
                       width: 20,
-                      child:isFilter?IconButton(
-                        padding: EdgeInsets.only(right: 5),
-                          onPressed: (){
-                            EventProvider.loadEvents();
-                            selectedCategoriesList.clear();
-                            isFilter=false;
-                            },
-                          icon: Icon(
-                            Icons.close,
-                            color: Color(0xFF454545),
-                            size: 30,
-                          ))
+                      child: isFilter
+                          ? IconButton(
+                              padding: EdgeInsets.only(right: 5),
+                              onPressed: () {
+                                EventProvider.loadEvents();
+                                selectedCategoriesList.clear();
+                                isFilter = false;
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: Color(0xFF454545),
+                                size: 30,
+                              ))
                           : IconButton(
-                          padding: EdgeInsets.only(right: 10, left: 3),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext dialogContext) {
-                                  return StatefulBuilder(
-                                      builder: (context, setState) {
-                                    return AlertDialog(
-                                      actions: [
-                                        Material(
-                                          elevation: 2,
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          color: const Color(0xFF513ADA),
-                                          child: MaterialButton(
-                                            minWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                3,
-                                            height: 20,
-                                            onPressed: () {
-                                              isFilter=true;
-                                              filterEvents(selectedCategoriesList);
-                                              Navigator.of(context, rootNavigator: true).pop();
-                                            },
-                                            child: Text("Appliquer",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 17,
-                                                  color:
-                                                      const Color(0xFFFFFFFF),
-                                                  fontWeight: FontWeight.bold,
-                                                )),
-                                          ),
-                                        ),
-                                      ],
-                                      title: Text("Filtrer"),
-                                      scrollable: true,
-                                      content: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: <Widget>[
-                                          Positioned(
-                                            right: -40.0,
-                                            top: -40.0,
-                                            child: InkResponse(
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: CircleAvatar(
-                                                child: Icon(Icons.close),
-                                                backgroundColor: Colors.red,
+                              padding: EdgeInsets.only(right: 10, left: 3),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext dialogContext) {
+                                      return StatefulBuilder(
+                                          builder: (context, setState) {
+                                        return AlertDialog(
+                                          actions: [
+                                            Material(
+                                              elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: const Color(0xFF513ADA),
+                                              child: MaterialButton(
+                                                minWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3,
+                                                height: 20,
+                                                onPressed: () {
+                                                  isFilter = true;
+                                                  filterEvents(
+                                                      selectedCategoriesList);
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                },
+                                                child: Text("Appliquer",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 17,
+                                                      color: const Color(
+                                                          0xFFFFFFFF),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    )),
                                               ),
                                             ),
-                                          ),
-                                          Column(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    EdgeInsets.only(left: 18),
-                                                alignment: Alignment.bottomLeft,
-                                                child: Text(
-                                                  "Categories",
-                                                  style:
-                                                      TextStyle(fontSize: 17),
-                                                ),
-                                              ),
-                                              Divider(
-                                                color: Colors.grey,
-                                              ),
-                                              SizedBox(
-                                                height: 300,
-                                                child: SingleChildScrollView(
-                                                  child: FilterChips(
-                                                    categories: categoryList,
-                                                    onSelectionChanged:
-                                                        (selectedList) {
-                                                      setState(() {
-                                                        selectedCategoriesList =
-                                                            selectedList;
-                                                      });
-                                                    },
+                                          ],
+                                          title: Text("Filtrer"),
+                                          scrollable: true,
+                                          content: Stack(
+                                            clipBehavior: Clip.none,
+                                            children: <Widget>[
+                                              Positioned(
+                                                right: -40.0,
+                                                top: -40.0,
+                                                child: InkResponse(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: CircleAvatar(
+                                                    child: Icon(Icons.close),
+                                                    backgroundColor: Colors.red,
                                                   ),
                                                 ),
                                               ),
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 18),
+                                                    alignment:
+                                                        Alignment.bottomLeft,
+                                                    child: Text(
+                                                      "Categories",
+                                                      style: TextStyle(
+                                                          fontSize: 17),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.grey,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 300,
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: FilterChips(
+                                                        categories:
+                                                            categoryList,
+                                                        onSelectionChanged:
+                                                            (selectedList) {
+                                                          setState(() {
+                                                            selectedCategoriesList =
+                                                                selectedList;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                              // Container(
+                                              //       child:Column(
+                                              //         children: [
+                                              //           Container(
+                                              //             padding: EdgeInsets.only(left: 18),
+                                              //             alignment:Alignment.bottomLeft,
+                                              //             child: Text("Categories",style: TextStyle(fontSize: 17),),
+                                              //           ),
+                                              //           Divider(color: Colors.grey,
+                                              //           ),
+                                              //           SizedBox(
+                                              //             height:300,
+                                              //             child: SingleChildScrollView(
+                                              //               physics: BouncingScrollPhysics(),
+                                              //               scrollDirection: Axis.vertical,
+                                              //               child: Wrap(
+                                              //                   children:
+                                              //                   categoryList.map((String e) =>
+                                              //                       Padding(
+                                              //                         padding: const EdgeInsets.all(8),
+                                              //                         child: FilterChip(
+                                              //                           selected: selected,
+                                              //                           selectedColor: Color(0xFF513ADA),
+                                              //                           pressElevation: 10,
+                                              //                           label: Text(e),
+                                              //                           onSelected: (isSelected) {
+                                              //                             selectChip(e,isSelected);
+                                              //                           },
+                                              //                         ),
+                                              //                       )).toList()
+                                              //               ),
+                                              //             ),
+                                              //           )
+                                              //         ],
+                                              //       ),
+                                              // )
                                             ],
-                                          )
-                                          // Container(
-                                          //       child:Column(
-                                          //         children: [
-                                          //           Container(
-                                          //             padding: EdgeInsets.only(left: 18),
-                                          //             alignment:Alignment.bottomLeft,
-                                          //             child: Text("Categories",style: TextStyle(fontSize: 17),),
-                                          //           ),
-                                          //           Divider(color: Colors.grey,
-                                          //           ),
-                                          //           SizedBox(
-                                          //             height:300,
-                                          //             child: SingleChildScrollView(
-                                          //               physics: BouncingScrollPhysics(),
-                                          //               scrollDirection: Axis.vertical,
-                                          //               child: Wrap(
-                                          //                   children:
-                                          //                   categoryList.map((String e) =>
-                                          //                       Padding(
-                                          //                         padding: const EdgeInsets.all(8),
-                                          //                         child: FilterChip(
-                                          //                           selected: selected,
-                                          //                           selectedColor: Color(0xFF513ADA),
-                                          //                           pressElevation: 10,
-                                          //                           label: Text(e),
-                                          //                           onSelected: (isSelected) {
-                                          //                             selectChip(e,isSelected);
-                                          //                           },
-                                          //                         ),
-                                          //                       )).toList()
-                                          //               ),
-                                          //             ),
-                                          //           )
-                                          //         ],
-                                          //       ),
-                                          // )
-                                        ],
-                                      ),
-                                    );
-                                  });
-                                });
-                          },
-                          icon: Icon(
-                            Icons.filter_list_alt,
-                            color: Color(0xFF454545),
-                            size: 30,
-                          )),
+                                          ),
+                                        );
+                                      });
+                                    });
+                              },
+                              icon: Icon(
+                                Icons.filter_list_alt,
+                                color: Color(0xFF454545),
+                                size: 30,
+                              )),
                     ),
                   ],
                 ),
@@ -487,14 +496,14 @@ class _HomePageState extends State<HomePage> {
                   }
                   return Text("Locating your city....");
                 }),
-            if (!searchIsClicked && !isFilter )
+            if (!searchIsClicked && !isFilter)
               AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 10),
                 opacity: closeTopContainer ? 0 : 1,
                 child: AnimatedContainer(
                   alignment: Alignment.topCenter,
                   width: size.width,
-                  height: closeTopContainer ? 0 : 200,
+                  height: closeTopContainer ? 0 : 170,
                   duration: Duration(milliseconds: 70),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -502,22 +511,28 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding:
                             const EdgeInsets.only(top: 3, left: 15, bottom: 3),
-                        child: Text('Recommended',
+                        child: Text('Recommendé pour vous',
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               color: Colors.black,
                             )),
                       ),
                       Container(
-                          height: 160,
+                          decoration: BoxDecoration(
+                            backgroundBlendMode: BlendMode.colorDodge,
+                            color: Colors.transparent,
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          height: 140,
                           // child: FutureBuilder(
                           //   future: getEvents(),
                           //   builder: (context, AsyncSnapshot snapshot) {
                           //     if (snapshot.hasData) {
                           //       return Flexible(
                           child: ListView.builder(
+                              padding: EdgeInsets.symmetric(vertical: 10),
                               physics: BouncingScrollPhysics(),
-                              clipBehavior: Clip.none,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
                               scrollDirection: Axis.horizontal,
                               itemCount: EventProvider.recommendedEvents.length,
                               itemBuilder: (context, index) {
@@ -525,16 +540,17 @@ class _HomePageState extends State<HomePage> {
                                   fit: BoxFit.fitWidth,
                                   alignment: Alignment.topCenter,
                                   child: Card(
+                                      surfaceTintColor: Colors.black,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(15)),
+                                              BorderRadius.circular(25)),
                                       margin: EdgeInsets.only(left: 15),
-                                      elevation: 2,
+                                      elevation: 5,
                                       child: GestureDetector(
                                         child: Container(
                                             margin: const EdgeInsets.all(0),
-                                            height: 170,
-                                            width: 250,
+                                            height: 130,
+                                            width: 170,
                                             child: Column(
                                               children: [
                                                 SizedBox(
@@ -548,26 +564,27 @@ class _HomePageState extends State<HomePage> {
                                                                 .only(
                                                           topLeft:
                                                               Radius.circular(
-                                                                  15.0),
+                                                                  25.0),
                                                           topRight:
                                                               Radius.circular(
-                                                                  15.0),
-                                                          // bottomRight: Radius
-                                                          //     .circular(25.0),
-                                                          // bottomLeft: Radius
-                                                          //     .circular(25.0),
+                                                                  25.0),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  25.0),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  25.0),
                                                         ),
                                                         child: SizedBox(
                                                           height: 130,
-                                                          width: 250,
+                                                          width: 170,
                                                           child: Image(
-                                                            image:
-                                                                Image
-                                                                    .network(
+                                                            image: Image.network(
                                                                     EventProvider
-                                                                        .recommendedEvents[index]
+                                                                        .recommendedEvents[
+                                                                            index]
                                                                         .photoUrl!)
-                                                                    .image,
+                                                                .image,
                                                             fit: BoxFit.cover,
                                                             color: Colors
                                                                 .black54
@@ -596,17 +613,17 @@ class _HomePageState extends State<HomePage> {
                                                                               end: Alignment.bottomCenter,
                                                                               colors: [
                                                                         Color(
-                                                                            0xBE000000),
+                                                                            0x00000000),
+                                                                        Color(
+                                                                            0x00000000),
                                                                         Color(
                                                                             0x00000000),
                                                                         Color(
                                                                             0x00000000),
                                                                         Color(
-                                                                            0xA6000000),
-                                                                        Color(
-                                                                            0xD5000000),
+                                                                            0x00000000),
                                                                       ])),
-                                                                  height: 140,
+                                                                  // height: 130,
                                                                   width: double
                                                                       .infinity,
                                                                 );
@@ -644,47 +661,47 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Positioned(
-                                                        bottom: 15,
-                                                        left: 13,
-                                                        right: 20,
-                                                        child: Text(
-                                                          EventProvider
-                                                              .recommendedEvents[
-                                                                  index]
-                                                              .title!,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                              fontFamily:
-                                                                  "Lato"),
-                                                        ),
-                                                      ),
+                                                      // Positioned(
+                                                      //   bottom: 15,
+                                                      //   left: 13,
+                                                      //   right: 20,
+                                                      //   child: Text(
+                                                      //     EventProvider
+                                                      //         .recommendedEvents[
+                                                      //             index]
+                                                      //         .title!,
+                                                      //     style: TextStyle(
+                                                      //         color:
+                                                      //             Colors.white,
+                                                      //         fontSize: 15,
+                                                      //         fontWeight:
+                                                      //             FontWeight
+                                                      //                 .w800,
+                                                      //         fontFamily:
+                                                      //             "Lato"),
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
                                                 ),
-                                                Container(
-                                                  height: 30,
-                                                  margin: EdgeInsets.all(0),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              25)),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          // Icon(Icons.)
-                                                          Text("enf"),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                // Container(
+                                                //   height: 30,
+                                                //   margin: EdgeInsets.all(0),
+                                                //   decoration: BoxDecoration(
+                                                //       borderRadius:
+                                                //           BorderRadius.circular(
+                                                //               25)),
+                                                //   child: Column(
+                                                //     children: [
+                                                //       Row(
+                                                //         children: [
+                                                //           // Icon(Icons.)
+                                                //           Text("enf"),
+                                                //         ],
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // ),
                                               ],
                                             )),
                                         onTap: () {
@@ -699,11 +716,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-            // Divider(),
-            if (!searchIsClicked && !isFilter )
+            if (!searchIsClicked && !isFilter)
               Padding(
-                padding: EdgeInsets.only(top: 3, bottom: 3, right: 340),
-                child: Text('All',
+                padding: EdgeInsets.only(bottom: 3, right: 340),
+                child: Text('Tout',
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.black,
@@ -725,7 +741,7 @@ class _HomePageState extends State<HomePage> {
                             elevation: 2,
                             child: GestureDetector(
                               child: SizedBox(
-                                  height: 220,
+                                  height: 260,
                                   child: Column(
                                     children: [
                                       Stack(
@@ -742,16 +758,14 @@ class _HomePageState extends State<HomePage> {
                                               //     .circular(25.0),
                                             ),
                                             child: SizedBox(
-                                              height: 160,
+                                              height: 200,
                                               width: 372,
                                               child: Image(
-                                                image:
-                                                    Image
-                                                        .network(EventProvider.
-                                                             events[index]
+                                                image: Image.network(
+                                                        EventProvider
+                                                            .events[index]
                                                             .photoUrl!)
-                                                        .image,
-
+                                                    .image,
                                                 fit: BoxFit.cover,
                                                 color: Colors.black54
                                                     .withOpacity(0.1),
@@ -775,10 +789,10 @@ class _HomePageState extends State<HomePage> {
                                                                   end: Alignment
                                                                       .bottomCenter,
                                                                   colors: [
-                                                            Color(0xCC000000),
                                                             Color(0x00000000),
                                                             Color(0x00000000),
-                                                            Color(0xA6000000),
+                                                            Color(0x00000000),
+                                                            Color(0x94000000),
                                                             Color(0xD5000000),
                                                           ])),
                                                     );
@@ -817,14 +831,36 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           Positioned(
-                                              child: LikeButton(
-                                                isLiked:EventProvider.events[index].likes.contains(FirebaseAuth.instance.currentUser!.uid),
-                                                onTap : (isLiked) async {
-                                                  final success = await addToFavorites(EventProvider.events[index].id,isLiked);
-                                                  EventProvider.loadEvents();
-                                                  return !isLiked;
-
-                                                },
+                                              right: 10,
+                                              top: 10,
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    Color(0x57000000),
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 4),
+                                                  child: LikeButton(
+                                                    animationDuration: Duration(
+                                                        milliseconds: 300),
+                                                    isLiked: EventProvider
+                                                        .events[index].likes
+                                                        .contains(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid),
+                                                    onTap: (isLiked) async {
+                                                      final success =
+                                                          await addToFavorites(
+                                                              EventProvider
+                                                                  .events[index]
+                                                                  .id,
+                                                              isLiked);
+                                                      EventProvider
+                                                          .loadEvents();
+                                                      return !isLiked;
+                                                    },
+                                                  ),
+                                                ),
                                               ))
                                         ],
                                       ),
@@ -832,9 +868,112 @@ class _HomePageState extends State<HomePage> {
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(25)),
-                                        height: 40,
+                                        height: 60,
                                         child: Row(
-                                          children: [],
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5, left: 8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.date_range,
+                                                        color:
+                                                            Color(0x9D070407),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 3,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(top: 3.0),
+                                                        child: Text(
+                                                          DateFormat(
+                                                                  'MM/dd/yyyy')
+                                                              .format(EventProvider
+                                                                  .events[index]
+                                                                  .startingDate!
+                                                                  .toDate()),
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF070407)),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .location_on_outlined,
+                                                        color:
+                                                            Color(0x9D070407),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 3,
+                                                      ),
+                                                      FutureBuilder(
+                                                          future: getLocation(
+                                                              EventProvider
+                                                                  .events[index]
+                                                                  .eventLocation!),
+                                                          initialData:
+                                                              "Loading location..",
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              AsyncSnapshot<
+                                                                      String>
+                                                                  text) {
+                                                            return Text(
+                                                                text
+                                                                    .requireData,
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xFF070407)));
+                                                          }),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 25.0, right: 9),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.access_time,
+                                                    color: Color(0x9D070407),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(
+                                                    DateFormat('hh:mm').format(
+                                                        EventProvider
+                                                            .events[index]
+                                                            .startingDate!
+                                                            .toDate()),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -916,59 +1055,47 @@ class _HomePageState extends State<HomePage> {
   FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
   Future<bool> addToFavorites(String? id, bool isLiked) async {
-    if(!isLiked) {
-      await firestoreInstance
-          .collection("events")
-          .doc(id)
-          .update({
+    if (!isLiked) {
+      await firestoreInstance.collection("events").doc(id).update({
         "likes": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       });
       await firestoreInstance
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({ "favorites": FieldValue.arrayUnion([id])});
-    }else{
+          .update({
+        "favorites": FieldValue.arrayUnion([id])
+      });
+    } else {
       await firestoreInstance
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({ "favorites": FieldValue.arrayRemove([id])});
-      await firestoreInstance
-          .collection("events")
-          .doc(id)
           .update({
-        "likes": FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+        "favorites": FieldValue.arrayRemove([id])
       });
-     }
+      await firestoreInstance.collection("events").doc(id).update({
+        "likes":
+            FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+      });
+    }
     return true;
   }
 
-  // bool? isUserFavorite(String? id) {
-   //  bool? isLiked;
-   //  List<dynamic> likes=[];
-   //  Event event ;
-   //  Future<Event> get() async {
-   //    await firestoreInstance.collection("events").doc(id!).get().then((value) {
-   //      event = Event.fromJson(value.data()!);
-   //      print(event.title);
-   //      return event;
-   //    });
-   //    return event;
-   //  };
-   // get.then((value) => event=value);
-   //  likes=event.likes;
-   //  if (likes.isNotEmpty){
-   //    if (likes.contains(FirebaseAuth.instance.currentUser!.uid)){
-   //      isLiked=true;
-   //      // print(isLiked);
-   //      // print(likes);
-   //    }else{
-   //      isLiked=false;
-   //    }
-   //  }
-   //  // print(isLiked);
-   //  return isLiked;
-  // }
+  Future<String> getLocation(Map<String, dynamic> eventLocation) async {
+    String loc;
+    GeoPoint location = eventLocation["geopoint"];
 
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(location.latitude, location.longitude);
+
+    Placemark place = placemarks[0];
+    List<String> addres = place.street!.split(" ");
+    if (addres.length > 4) {
+      loc =
+          ("${addres[0]} ${addres[1]} ${addres[3]} ${addres[4]},${place.locality}");
+    } else {
+      loc = ("${place.street},${place.locality}");
+    }
+
+    return loc;
+  }
 }
-
-

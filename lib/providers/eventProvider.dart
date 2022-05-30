@@ -7,7 +7,7 @@ class eventProvider extends ChangeNotifier{
   EventController eventController = EventController();
   List<Event> events =[];
   List<Event> recommendedEvents =[];
-  // List<Event> searchedEvents=[];
+  List<Event> favoriteEvents=[];
 
 
   eventProvider.initialize(){
@@ -17,6 +17,7 @@ class eventProvider extends ChangeNotifier{
   Future<void> loadEvents() async{
     events = await eventController.getEvents();
     recommendedEvents = await eventController.getRecommendedEvents();
+    favoriteEvents =await eventController.getFavorites();
     notifyListeners();
   }
 

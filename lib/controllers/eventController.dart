@@ -26,53 +26,46 @@ class EventController{
 
     FirebaseAuth _auth = FirebaseAuth.instance;
     String uid =_auth.currentUser!.uid;
-    List<dynamic> userCategory = await GetUserCategory(uid);
+    List<dynamic> userThemes = await GetUserThemes(uid);
 
-    Query query = firestore.collection("events").where("category",arrayContainsAny: userCategory);
+    Query query = firestore.collection("events").where("themes",arrayContainsAny: userThemes);
     return query.where("endingDate",isGreaterThan: Timestamp.fromDate(DateTime.now())).get().then((result) {
       List<Event> events =[];
       var event;
       for( event in result.docs){
         events.add(Event.fromJson(event.data()));
       }
+      print(events[0].title);
       return events;
     });
 
   }
 
-  Future<List<dynamic>> GetUserCategory(String uid) async {
+  Future<List<Event>> getFavorites() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid =_auth.currentUser!.uid;
+
+    Query query = firestore.collection("events").where("likes",arrayContainsAny: [uid]);
+    return query.where("endingDate",isGreaterThan: Timestamp.fromDate(DateTime.now())).get().then((result) {
+      List<Event> events =[];
+      var event;
+      for( event in result.docs){
+        events.add(Event.fromJson(event.data()));
+      }
+      print(events[0].title);
+      return events;
+    });
+  }
+
+  Future<List<dynamic>> GetUserThemes(String uid) async {
     UserModel user=UserModel();
     var doc= await firestore.collection("users").doc(uid);
-    await doc.get().then((value) => user.category = value.data()!["category"]);
-    print(user.category);
-    return user.category;
+    await doc.get().then((value) => user.themes = value.data()!["themes"]);
+    print(user.themes);
+    return user.themes;
 
   }
 
-  bool isUserFavorite(String? id){
-    bool? isLiked=false;
-    List<dynamic> likes=[];
-    void get() async {
-      await firestore.collection("events").doc(id!).get().then((value) {
-        if(value.data()?["likes"]!=null)
-          likes = value.data()!["likes"];});
-
-      if (likes.isNotEmpty){
-        if (likes.contains(FirebaseAuth.instance.currentUser!.uid)){
-          isLiked=true;
-          // print(isLiked);
-          // print(likes);
-        }else{
-          isLiked =false;
-        }
-      }else {
-        isLiked=false;
-      }
-    };
-    get();
-    print(isLiked);
-    return isLiked!;
-  }
 
 
 }

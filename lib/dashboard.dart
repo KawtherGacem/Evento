@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'controllers/loginController.dart';
+import 'favoritesPage.dart';
 import 'login.dart';
 import 'main.dart';
 
@@ -38,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> listWidgets = [
     HomePage(),
     addEvent(),
-    HomePage(),
+    FavoutitesPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
         items: [
           TabItem(icon: Icons.home, title: 'Acceuil'),
           TabItem(icon: Icons.add, title: 'Ajouter'),
-          TabItem(icon: Icons.favorite, title: 'Fav'),
+          TabItem(icon: Icons.favorite, title: 'Favoris'),
         ],
         onTap: onItemTapped,
         activeColor:Color(0xFF604BE0) ,
