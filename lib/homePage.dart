@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-        backgroundColor: Color(0xffececf5),
+        backgroundColor: Color(0xc8f4f4f4),
         key: _scaffoldKey,
         drawer: Drawer(
           child: ListView(
@@ -272,6 +272,7 @@ class _HomePageState extends State<HomePage> {
                           autofocus: false,
                           controller: searchController,
                           decoration: InputDecoration(
+                            hintText: "Recherche par titre",
                               filled: true,
                               contentPadding: EdgeInsets.only(bottom: 4),
                               suffixIcon: IconButton(
@@ -718,7 +719,7 @@ class _HomePageState extends State<HomePage> {
               ),
             if (!searchIsClicked && !isFilter)
               Padding(
-                padding: EdgeInsets.only(bottom: 3, right: 340),
+                padding: EdgeInsets.only(bottom: 3, right: 335),
                 child: Text('Tout',
                     textAlign: TextAlign.start,
                     style: TextStyle(
@@ -727,7 +728,7 @@ class _HomePageState extends State<HomePage> {
               ),
             Flexible(
               child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: ListView.builder(
                       controller: controller,
                       physics: BouncingScrollPhysics(),
@@ -888,7 +889,7 @@ class _HomePageState extends State<HomePage> {
                                                       Icon(
                                                         Icons.date_range,
                                                         color:
-                                                            Color(0x9D070407),
+                                                            Color(0x9B000000),
                                                       ),
                                                       SizedBox(
                                                         width: 3,
@@ -906,7 +907,7 @@ class _HomePageState extends State<HomePage> {
                                                                   .toDate()),
                                                           style: TextStyle(
                                                               color: Color(
-                                                                  0xFF070407)),
+                                                                  0x9B000000),fontSize: 14),
                                                         ),
                                                       )
                                                     ],
@@ -922,7 +923,7 @@ class _HomePageState extends State<HomePage> {
                                                         Icons
                                                             .location_on_outlined,
                                                         color:
-                                                            Color(0x9D070407),
+                                                            Color(0x9B000000),
                                                       ),
                                                       SizedBox(
                                                         width: 3,
@@ -939,12 +940,15 @@ class _HomePageState extends State<HomePage> {
                                                               AsyncSnapshot<
                                                                       String>
                                                                   text) {
-                                                            return Text(
-                                                                text
-                                                                    .requireData,
-                                                                style: TextStyle(
-                                                                    color: Color(
-                                                                        0xFF070407)));
+                                                            return Padding(
+                                                              padding: const EdgeInsets.only(top: 3.0),
+                                                              child: Text(
+                                                                  text
+                                                                      .requireData,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0x9B000000),fontSize: 13)),
+                                                            );
                                                           }),
                                                     ],
                                                   ),
@@ -958,17 +962,20 @@ class _HomePageState extends State<HomePage> {
                                                 children: [
                                                   Icon(
                                                     Icons.access_time,
-                                                    color: Color(0x9D070407),
+                                                    color: Color(0x9B000000),
                                                   ),
                                                   SizedBox(
                                                     width: 3,
                                                   ),
                                                   Text(
-                                                    DateFormat('hh:mm').format(
+                                                    DateFormat('Hm').format(
                                                         EventProvider
                                                             .events[index]
                                                             .startingDate!
                                                             .toDate()),
+                                                      style: TextStyle(
+                                                      color: Color(
+                                                          0x9B000000),fontSize: 13),
                                                   ),
                                                 ],
                                               ),

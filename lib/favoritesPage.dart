@@ -30,9 +30,13 @@ class _FavoutitesPageState extends State<FavoutitesPage> {
         appBar:  AppBar(
           centerTitle: true,
           title: Container(
+            alignment: Alignment.center,
             width: 125,
             // margin: EdgeInsets.only(left: 10),
-            child: Text("Favoris",style: TextStyle(color: Colors.purple),)
+            child: Text("Favoris",
+              style: const TextStyle(color: Color(0xFF50519E),
+              fontSize: 35,fontWeight: FontWeight.bold
+            ),)
             // Image.asset("assets/logotwil.png"),
           ),
           elevation: 0,
@@ -46,7 +50,7 @@ class _FavoutitesPageState extends State<FavoutitesPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 15,bottom: 5),
+                  padding: const EdgeInsets.only(top: 10, left: 25,bottom: 5),
                   child: Text('Vos événements favoris',
                       textAlign: TextAlign.start,
                       style: TextStyle(color: Colors.black,)

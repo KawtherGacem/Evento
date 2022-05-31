@@ -43,6 +43,8 @@ class _DashboardState extends State<Dashboard> {
   ];
   @override
   Widget build(BuildContext context) {
+    final EventProvider = Provider.of<eventProvider>(context);
+    EventProvider.loadEvents();
     return Scaffold(
         body:listWidgets[selectedIndex],
         bottomNavigationBar: ConvexAppBar.badge(

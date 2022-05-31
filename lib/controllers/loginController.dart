@@ -63,14 +63,9 @@ class LoginController with ChangeNotifier{
           "userName" : user?.displayName,
           "email":user?.email,
           "photo":user?.photoURL,
-          "category" : ["computer science","biology","art"]
+          "themes" : ["Informatique","Art","Environnement"]
         }).then((_) {
       print(user?.uid);
-      firebaseFirestore
-          .collection("users")
-          .doc(user?.uid)
-          .collection("likedEvents")
-          .add({"eventID": "true"});
     });
 
 
