@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/models/Event.dart';
 import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,7 @@ import 'package:intl/intl.dart';
 import 'eventPage.dart';
 
 class FavoutitesPage extends StatefulWidget {
-  const FavoutitesPage({Key? key}) : super(key: key);
+  const FavoutitesPage(List<Event> events, {Key? key}) : super(key: key);
 
   @override
   State<FavoutitesPage> createState() => _FavoutitesPageState();
@@ -179,14 +180,31 @@ class _FavoutitesPageState extends State<FavoutitesPage> {
                                                             .currentUser!
                                                             .uid),
                                                         onTap: (isLiked) async {
-                                                          final success =
+
+                                                                if (isLiked) {
+                                                                EventProvider
+                                                                    .events[index].likes
+                                                                    .remove(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                                }else{
+                                                                EventProvider
+                                                                    .events[index].likes
+                                                                    .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);}
+                                                                setState((){
+
+                                                                });
+
                                                           await addToFavorites(
                                                               EventProvider
                                                                   .favoriteEvents[index]
                                                                   .id,
                                                               isLiked);
-                                                          EventProvider
-                                                              .loadEvents();
+
                                                           return !isLiked;
                                                         },
                                                       ),

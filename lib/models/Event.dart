@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Event {
@@ -14,11 +15,12 @@ class Event {
   Timestamp? endingDate;
   Map<String,dynamic>? eventLocation;
   String? inscriptionUrl;
-  List<dynamic> category=[];
+  // List<dynamic> category=[];
+  List<dynamic> themes=[];
   List<dynamic> likes=[];
 
 
-  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.category, this.photoUrl, this.startingDate, this.endingDate , this.eventLocation, this.inscriptionUrl,this.likes);
+  Event(this.id, this.title, this.description, this.uid,this.organizerPhoto, this.organizerName, this.photoUrl, this.themes,this.startingDate, this.endingDate , this.eventLocation, this.inscriptionUrl,this.likes);
 
   Event.fromJson(Map<String,dynamic> json){
     id =json["id"];
@@ -27,12 +29,13 @@ class Event {
     organizerPhoto = json["organizerPhoto"];
     organizerName = json["organizerName"];
     uid = json["uid"];
-    category = json["category"];
+    // category = json["category"];
     photoUrl = json["photoUrl"];
     startingDate= json["startingDate"];
     endingDate= json["endingDate"];
     eventLocation= json["eventLocation"];
     inscriptionUrl=json["inscriptionUrl"];
+    themes=json["themes"];
     likes=json["likes"];
   }
 }

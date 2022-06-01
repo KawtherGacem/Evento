@@ -26,8 +26,10 @@ import 'models/Event.dart';
 import 'myOwnEvent.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  const HomePage(List<Event> events, {Key? key}) :
+      _events =events,
+        super(key: key);
+  final List<Event> _events;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -36,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String? currentAddress;
   Position? currentLocation;
+  late List<Event> Events ;
 
   // scrolling animation
   ScrollController controller = ScrollController();
@@ -48,13 +51,13 @@ class _HomePageState extends State<HomePage> {
 
   bool selected = false;
 
-  List<String> selectedCategoriesList = [];
+  List<String> selectedThemesList = [];
 
   bool isFilter = false;
 
   @override
   void initState() {
-    // TODO: implement initState
+    Events =widget._events;
     super.initState();
     getUserLocation();
     controller.addListener(() {
@@ -109,7 +112,9 @@ class _HomePageState extends State<HomePage> {
 
     void searchEvent(String query) {
       if (query.isEmpty) {
-        EventProvider.loadEvents();
+        setState((){
+          EventProvider.events=Events;
+        });
       } else {
         EventProvider.events = EventProvider.events
             .where((event) =>
@@ -122,11 +127,13 @@ class _HomePageState extends State<HomePage> {
     void filterEvents(List<String> selectedCategories) {
       if (selectedCategories.isEmpty) {
         Fluttertoast.showToast(msg: "aucun filtre n'été selectionné");
-        EventProvider.loadEvents();
+        setState((){
+          EventProvider.events=Events;
+        });
       } else {
         EventProvider.events = EventProvider.events
             .where((event) => selectedCategories
-                .every((element) => event.category.contains(element)))
+                .every((element) => event.themes.contains(element)))
             .toList();
         print(EventProvider.events);
       }
@@ -241,7 +248,9 @@ class _HomePageState extends State<HomePage> {
         body: RefreshIndicator(
           semanticsLabel: "rafraîchir",
           onRefresh: () async {
-            return await EventProvider.loadEvents();
+
+            await EventProvider.loadEvents();
+             Events=EventProvider.events;
           },
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
@@ -277,7 +286,9 @@ class _HomePageState extends State<HomePage> {
                               contentPadding: EdgeInsets.only(bottom: 4),
                               suffixIcon: IconButton(
                                 onPressed: () {
-                                  EventProvider.loadEvents();
+                                  setState(() {
+                                    EventProvider.events=Events;
+                                  });
                                   FocusScope.of(context).unfocus();
                                   searchIsClicked = false;
                                   searchController.clear;
@@ -305,8 +316,11 @@ class _HomePageState extends State<HomePage> {
                           ? IconButton(
                               padding: EdgeInsets.only(right: 5),
                               onPressed: () {
-                                EventProvider.loadEvents();
-                                selectedCategoriesList.clear();
+                                setState(() {
+                                  EventProvider.events=Events;
+
+                                });
+                                selectedThemesList.clear();
                                 isFilter = false;
                               },
                               icon: Icon(
@@ -338,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                                                 onPressed: () {
                                                   isFilter = true;
                                                   filterEvents(
-                                                      selectedCategoriesList);
+                                                      selectedThemesList);
                                                   Navigator.of(context,
                                                           rootNavigator: true)
                                                       .pop();
@@ -399,7 +413,7 @@ class _HomePageState extends State<HomePage> {
                                                         onSelectionChanged:
                                                             (selectedList) {
                                                           setState(() {
-                                                            selectedCategoriesList =
+                                                            selectedThemesList =
                                                                 selectedList;
                                                           });
                                                         },
@@ -842,7 +856,7 @@ class _HomePageState extends State<HomePage> {
                                                       EdgeInsets.only(left: 4),
                                                   child: LikeButton(
                                                     animationDuration: Duration(
-                                                        milliseconds: 300),
+                                                        milliseconds: 2000),
                                                     isLiked: EventProvider
                                                         .events[index].likes
                                                         .contains(FirebaseAuth
@@ -850,14 +864,37 @@ class _HomePageState extends State<HomePage> {
                                                             .currentUser!
                                                             .uid),
                                                     onTap: (isLiked) async {
-                                                      final success =
-                                                          await addToFavorites(
-                                                              EventProvider
-                                                                  .events[index]
-                                                                  .id,
-                                                              isLiked);
-                                                      EventProvider
-                                                          .loadEvents();
+                                                      if (isLiked) {
+                                                        EventProvider
+                                                            .events[index].likes
+                                                            .remove(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                      }else{
+                                                        EventProvider
+                                                            .events[index].likes
+                                                            .add(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                        setState((){
+
+                                                        });
+                                                        await addToFavorites(
+                                                                    EventProvider
+                                                                        .events[index]
+                                                                        .id,
+                                                                    isLiked);
+                                                      }
+                                                      // final success =
+                                                      //     await addToFavorites(
+                                                      //         EventProvider
+                                                      //             .events[index]
+                                                      //             .id,
+                                                      //         isLiked);
+                                                      // EventProvider
+                                                      //     .loadEvents();
                                                       return !isLiked;
                                                     },
                                                   ),
@@ -899,12 +936,7 @@ class _HomePageState extends State<HomePage> {
                                                             const EdgeInsets
                                                                 .only(top: 3.0),
                                                         child: Text(
-                                                          DateFormat(
-                                                                  'MM/dd/yyyy')
-                                                              .format(EventProvider
-                                                                  .events[index]
-                                                                  .startingDate!
-                                                                  .toDate()),
+                                                          DateFormat('MM/dd/yyyy').format(EventProvider.events[index].startingDate!.toDate()),
                                                           style: TextStyle(
                                                               color: Color(
                                                                   0x9B000000),fontSize: 14),
@@ -1066,19 +1098,7 @@ class _HomePageState extends State<HomePage> {
       await firestoreInstance.collection("events").doc(id).update({
         "likes": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       });
-      await firestoreInstance
-          .collection("users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        "favorites": FieldValue.arrayUnion([id])
-      });
     } else {
-      await firestoreInstance
-          .collection("users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        "favorites": FieldValue.arrayRemove([id])
-      });
       await firestoreInstance.collection("events").doc(id).update({
         "likes":
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])

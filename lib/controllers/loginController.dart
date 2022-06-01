@@ -113,6 +113,9 @@ class LoginController with ChangeNotifier{
       );
     }else{
       Get.offAll(Login());
+
+
+
       // Navigator.of(context).pushReplacement(
       //   MaterialPageRoute(
       //     builder: (context) => Login(
