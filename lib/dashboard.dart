@@ -3,9 +3,11 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/homePage.dart';
 import 'package:evetoapp/profilescreen.dart';
+import 'package:evetoapp/providers/eventProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'controllers/loginController.dart';
 import 'eventPage.dart';
 import 'favoritesPage.dart';
@@ -79,10 +81,10 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void onItemTapped(int index) async{
-    // if (index ==0 || index==2){
-    // final EventProvider = Provider.of<eventProvider>(context,listen: false);
-    // EventProvider.loadEvents();
-    // }
+    if (index==2){
+    final EventProvider = Provider.of<eventProvider>(context,listen: false);
+    EventProvider.loadEvents();
+    }
     setState(() {
       selectedIndex = index;
     });

@@ -24,6 +24,7 @@ import 'package:intl/intl.dart';
 
 import 'models/Event.dart';
 import 'myOwnEvent.dart';
+import 'notifications.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -239,7 +240,9 @@ class _HomePageState extends State<HomePage> {
                 color: Color(0xFF513ADA),
                 size: 35,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Get.to(Notifications());
+              },
             ),
           ],
         ),

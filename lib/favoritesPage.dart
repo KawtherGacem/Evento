@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'controllers/eventController.dart';
 import 'eventPage.dart';
 
 class FavoutitesPage extends StatefulWidget {
@@ -21,23 +20,12 @@ class FavoutitesPage extends StatefulWidget {
 
 class _FavoutitesPageState extends State<FavoutitesPage> {
 
-  // FirebaseAuth _auth = FirebaseAuth.instance;
-  late List<Event> favorites ;
-  EventController eventController = EventController();
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void initState() {
-    eventController.loadEvents();
-    GetFav();
-    super.initState();
-  }
- void GetFav() async{
-    favorites = await eventController.getFavorites();
 
- }
   @override
   Widget build(BuildContext context) {
-
-
+    final EventProvider = Provider.of<eventProvider>(context);
 
     return Scaffold(
         appBar:  AppBar(
@@ -56,316 +44,320 @@ class _FavoutitesPageState extends State<FavoutitesPage> {
           backgroundColor: Colors.white,
         ),
 
-        body:  Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 25,bottom: 5),
-                child: Text('Vos événements favoris',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black,)
+        body:  RefreshIndicator(
+          onRefresh: () { return EventProvider.loadEvents(); },
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 25,bottom: 5),
+                  child: Text('Vos événements favoris',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(color: Colors.black,)
+                  ),
                 ),
-              ),
-              Flexible(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(top: 0),
-                        itemCount: favorites.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              margin: EdgeInsets.only(bottom: 20),
-                              elevation: 2,
-                              child: GestureDetector(
-                                child: SizedBox(
-                                    height: 260,
-                                    child: Column(
-                                      children: [
-                                        Stack(
-                                          // fit: StackFit.
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                              const BorderRadius.only(
-                                                topLeft: Radius.circular(15.0),
-                                                topRight: Radius.circular(15.0),
-                                                // bottomRight: Radius
-                                                //     .circular(25.0),
-                                                // bottomLeft: Radius
-                                                //     .circular(25.0),
-                                              ),
-                                              child: SizedBox(
-                                                height: 200,
-                                                width: 372,
-                                                child: Image(
-                                                  image: Image.network(
-                                                      favorites[index]
-                                                          .photoUrl!)
-                                                      .image,
-                                                  fit: BoxFit.cover,
-                                                  color: Colors.black54
-                                                      .withOpacity(0.1),
-                                                  colorBlendMode:
-                                                  BlendMode.colorBurn,
-                                                  frameBuilder: (BuildContext
-                                                  context,
-                                                      Widget child,
-                                                      int? frame,
-                                                      bool
-                                                      wasSynchronouslyLoaded) {
-                                                    if (wasSynchronouslyLoaded ||
-                                                        frame != null) {
-                                                      return Container(
-                                                        child: child,
-                                                        foregroundDecoration:
-                                                        const BoxDecoration(
-                                                            gradient: LinearGradient(
-                                                                begin: Alignment
-                                                                    .topCenter,
-                                                                end: Alignment
-                                                                    .bottomCenter,
-                                                                colors: [
-                                                                  Color(0x00000000),
-                                                                  Color(0x00000000),
-                                                                  Color(0x00000000),
-                                                                  Color(0x94000000),
-                                                                  Color(0xD5000000),
-                                                                ])),
-                                                      );
-                                                    } else {
-                                                      return Container(
-                                                        child:
-                                                        CircularProgressIndicator(
-                                                            color:
-                                                            Colors.grey,
-                                                            value: null,
-                                                            backgroundColor:
-                                                            Colors.white),
-                                                        alignment:
-                                                        Alignment(0, 0),
-                                                        constraints:
-                                                        BoxConstraints
-                                                            .expand(),
-                                                      );
-                                                    }
-                                                  },
+                Flexible(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(top: 0),
+                          itemCount: EventProvider.favoriteEvents.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                margin: EdgeInsets.only(bottom: 20),
+                                elevation: 2,
+                                child: GestureDetector(
+                                  child: SizedBox(
+                                      height: 260,
+                                      child: Column(
+                                        children: [
+                                          Stack(
+                                            // fit: StackFit.
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                const BorderRadius.only(
+                                                  topLeft: Radius.circular(15.0),
+                                                  topRight: Radius.circular(15.0),
+                                                  // bottomRight: Radius
+                                                  //     .circular(25.0),
+                                                  // bottomLeft: Radius
+                                                  //     .circular(25.0),
+                                                ),
+                                                child: SizedBox(
+                                                  height: 200,
+                                                  width: 372,
+                                                  child: Image(
+                                                    image: Image.network(
+                                                        EventProvider
+                                                            .favoriteEvents[index]
+                                                            .photoUrl!)
+                                                        .image,
+                                                    fit: BoxFit.cover,
+                                                    color: Colors.black54
+                                                        .withOpacity(0.1),
+                                                    colorBlendMode:
+                                                    BlendMode.colorBurn,
+                                                    frameBuilder: (BuildContext
+                                                    context,
+                                                        Widget child,
+                                                        int? frame,
+                                                        bool
+                                                        wasSynchronouslyLoaded) {
+                                                      if (wasSynchronouslyLoaded ||
+                                                          frame != null) {
+                                                        return Container(
+                                                          child: child,
+                                                          foregroundDecoration:
+                                                          const BoxDecoration(
+                                                              gradient: LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topCenter,
+                                                                  end: Alignment
+                                                                      .bottomCenter,
+                                                                  colors: [
+                                                                    Color(0x00000000),
+                                                                    Color(0x00000000),
+                                                                    Color(0x00000000),
+                                                                    Color(0x94000000),
+                                                                    Color(0xD5000000),
+                                                                  ])),
+                                                        );
+                                                      } else {
+                                                        return Container(
+                                                          child:
+                                                          CircularProgressIndicator(
+                                                              color:
+                                                              Colors.grey,
+                                                              value: null,
+                                                              backgroundColor:
+                                                              Colors.white),
+                                                          alignment:
+                                                          Alignment(0, 0),
+                                                          constraints:
+                                                          BoxConstraints
+                                                              .expand(),
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            Positioned(
-                                              bottom: 15,
-                                              left: 13,
-                                              right: 20,
-                                              child: Text(
-                                                favorites[index].title!,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontFamily: "Lato"),
+                                              Positioned(
+                                                bottom: 15,
+                                                left: 13,
+                                                right: 20,
+                                                child: Text(
+                                                  EventProvider
+                                                      .favoriteEvents[index].title!,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.w800,
+                                                      fontFamily: "Lato"),
+                                                ),
                                               ),
-                                            ),
-                                            Positioned(
-                                                right: 10,
-                                                top: 10,
-                                                child: CircleAvatar(
-                                                  backgroundColor:
-                                                  Color(0x57000000),
-                                                  child: Padding(
-                                                    padding:
-                                                    EdgeInsets.only(left: 4),
-                                                    child: LikeButton(
-                                                      animationDuration: Duration(
-                                                          milliseconds: 3000),
-                                                      isLiked: eventController.events[index].likes
-                                                          .contains(FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid),
-                                                      onTap: (isLiked) async {
-                                                        await addToFavorites(
-                                                            eventController.events[index]
-                                                                .id,
-                                                            isLiked);
-                                                        if (isLiked) {
-                                                          eventController.events[index].likes
-                                                              .remove(FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid);
-                                                        }else{
-                                                          eventController.events[index].likes
-                                                              .add(FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid);
-                                                        }
-                                                        setState((){
-                                                          eventController.getFavorites();
-                                                          favorites=eventController.favorites;
-                                                        });
+                                              Positioned(
+                                                  right: 10,
+                                                  top: 10,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                    Color(0x57000000),
+                                                    child: Padding(
+                                                      padding:
+                                                      EdgeInsets.only(left: 4),
+                                                      child: LikeButton(
+                                                        animationDuration: Duration(
+                                                            milliseconds: 300),
+                                                        isLiked: EventProvider
+                                                            .favoriteEvents[index].likes
+                                                            .contains(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid),
+                                                        onTap: (isLiked) async {
 
-                                                        // final success =
-                                                        //     await addToFavorites(
-                                                        //         EventProvider
-                                                        //             .events[index]
-                                                        //             .id,
-                                                        //         isLiked);
-                                                        // EventProvider
-                                                        //     .loadEvents();
-                                                        return !isLiked;
-                                                      },
+                                                                if (isLiked) {
+                                                                EventProvider
+                                                                    .events[index].likes
+                                                                    .remove(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                                }else{
+                                                                EventProvider
+                                                                    .events[index].likes
+                                                                    .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);}
+                                                                setState((){
+
+                                                                });
+
+                                                          await addToFavorites(
+                                                              EventProvider
+                                                                  .favoriteEvents[index]
+                                                                  .id,
+                                                              isLiked);
+
+                                                          return !isLiked;
+                                                        },
+                                                      ),
                                                     ),
-                                                  ),
-                                                ))
-                                          ],
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(25)),
-                                          height: 60,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        top: 5, left: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.date_range,
-                                                          color:
-                                                          Color(0x9D070407),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 3,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .only(top: 3.0),
-                                                          child: Text(
-                                                            DateFormat(
-                                                                'MM/dd/yyyy')
-                                                                .format(favorites[index]
-                                                                .startingDate!
-                                                                .toDate()),
-                                                            style: TextStyle(
-                                                                color: Color(
-                                                                    0xFF070407)),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons
-                                                              .location_on_outlined,
-                                                          color:
-                                                          Color(0x9D070407),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 3,
-                                                        ),
-                                                        FutureBuilder(
-                                                            future: getLocation(
-                                                                favorites[index]
-                                                                    .eventLocation!),
-                                                            initialData:
-                                                            "Loading location..",
-                                                            builder: (BuildContext
-                                                            context,
-                                                                AsyncSnapshot<
-                                                                    String>
-                                                                text) {
-                                                              return Text(
-                                                                  text
-                                                                      .requireData,
-                                                                  style: TextStyle(
-                                                                      color: Color(
-                                                                          0xFF070407)));
-                                                            }),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 25.0, right: 9),
-                                                child: Row(
+                                                  ))
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(25)),
+                                            height: 60,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                                   children: [
-                                                    Icon(
-                                                      Icons.access_time,
-                                                      color: Color(0x9D070407),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5, left: 8.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.date_range,
+                                                            color:
+                                                            Color(0x9D070407),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 3,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .only(top: 3.0),
+                                                            child: Text(
+                                                              DateFormat(
+                                                                  'MM/dd/yyyy')
+                                                                  .format(EventProvider
+                                                                  .favoriteEvents[index]
+                                                                  .startingDate!
+                                                                  .toDate()),
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xFF070407)),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 3,
-                                                    ),
-                                                    Text(
-                                                      DateFormat('hh:mm').format(
-                                                          favorites[index]
-                                                              .startingDate!
-                                                              .toDate()),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .location_on_outlined,
+                                                            color:
+                                                            Color(0x9D070407),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 3,
+                                                          ),
+                                                          FutureBuilder(
+                                                              future: getLocation(
+                                                                  EventProvider
+                                                                      .favoriteEvents[index]
+                                                                      .eventLocation!),
+                                                              initialData:
+                                                              "Loading location..",
+                                                              builder: (BuildContext
+                                                              context,
+                                                                  AsyncSnapshot<
+                                                                      String>
+                                                                  text) {
+                                                                return Text(
+                                                                    text
+                                                                        .requireData,
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF070407)));
+                                                              }),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
-                                              )
-                                            ],
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      bottom: 25.0, right: 9),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.access_time,
+                                                        color: Color(0x9D070407),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 3,
+                                                      ),
+                                                      Text(
+                                                        DateFormat('hh:mm').format(
+                                                            EventProvider
+                                                                .favoriteEvents[index]
+                                                                .startingDate!
+                                                                .toDate()),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    )),
-                                onTap: () {
-                                  Get.to(EventPage(
-                                      event: favorites[index],isRecommended: false));
-                                },
-                              )
-                            //   } else if (snapshot.hasError) {
-                            //     return Text('${snapshot.error}');
-                            //   }
-                            //   // By default, show a loading spinner.
-                            //   return Center(
-                            //       heightFactor: 50,
-                            //       widthFactor: 50,
-                            //       child: CircularProgressIndicator(
-                            //         semanticsLabel: "Loading events...",
-                            //         strokeWidth: 2, color: Colors.black,));
-                            // },
-                          );
+                                        ],
+                                      )),
+                                  onTap: () {
+                                    Get.to(EventPage(
+                                        event: EventProvider.favoriteEvents[index], isRecommended: false,));
+                                  },
+                                )
+                              //   } else if (snapshot.hasError) {
+                              //     return Text('${snapshot.error}');
+                              //   }
+                              //   // By default, show a loading spinner.
+                              //   return Center(
+                              //       heightFactor: 50,
+                              //       widthFactor: 50,
+                              //       child: CircularProgressIndicator(
+                              //         semanticsLabel: "Loading events...",
+                              //         strokeWidth: 2, color: Colors.black,));
+                              // },
+                            );
 
-                          // child: ListView.builder(
-                          //   itemCount: 10,
-                          //   itemBuilder: (BuildContext ctx, int index) {
-                          //     return Card(
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius: BorderRadius.circular(20)
-                          //       ),
-                          //       child: Text("testing testing "),
-                          //     );
-                          //   },
-                          // ),
-                        })),
-              )]
+                            // child: ListView.builder(
+                            //   itemCount: 10,
+                            //   itemBuilder: (BuildContext ctx, int index) {
+                            //     return Card(
+                            //       shape: RoundedRectangleBorder(
+                            //         borderRadius: BorderRadius.circular(20)
+                            //       ),
+                            //       child: Text("testing testing "),
+                            //     );
+                            //   },
+                            // ),
+                          })),
+                )]
+          ),
         )
 
 
@@ -379,7 +371,19 @@ class _FavoutitesPageState extends State<FavoutitesPage> {
       await firestoreInstance.collection("events").doc(id).update({
         "likes": FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
       });
+      await firestoreInstance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        "favorites": FieldValue.arrayUnion([id])
+      });
     } else {
+      await firestoreInstance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        "favorites": FieldValue.arrayRemove([id])
+      });
       await firestoreInstance.collection("events").doc(id).update({
         "likes":
         FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])

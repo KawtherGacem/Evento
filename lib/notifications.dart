@@ -1,6 +1,13 @@
+import 'package:evetoapp/dashboard.dart';
+import 'package:evetoapp/homePage.dart';
+import 'package:evetoapp/providers/eventProvider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
+
+import 'models/Event.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({Key? key}) : super(key: key);
@@ -10,14 +17,25 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
+
+  List<Event> events=[] ;
+
+
   @override
   Widget build(BuildContext context) {
+
+    final EventProvider = Provider.of<eventProvider>(context);
+
+    GetNotifications(){
+      events =EventProvider.favoriteEvents.where((element) => element.startingDate!.toDate().difference(DateTime.now())<Duration(days: 7)).toList();
+    };
+    GetNotifications();
     return Scaffold(
       appBar:  AppBar(
         leading: BackButton(
           color: Color(0xFF50519E),
           onPressed: (){
-            Get.off(context);
+            Get.to(Dashboard(user: FirebaseAuth.instance.currentUser!,));
           },
         ),
         centerTitle: true,
@@ -34,7 +52,18 @@ class _NotificationsState extends State<Notifications> {
         elevation: 0,
         backgroundColor: Colors.white,
       ),
+      body: ListView.builder(
+        itemCount: events.length,
 
+          itemBuilder: (BuildContext context,index){
+            return(ListTile(
+              title: Text(
+                events[index].title!
+              ),
+
+            ));
+
+          }),
     );
   }
 }

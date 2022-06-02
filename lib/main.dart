@@ -12,7 +12,11 @@ import 'package:provider/provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: eventProvider.initialize()),
+      ],
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

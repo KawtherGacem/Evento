@@ -16,9 +16,9 @@ class eventProvider extends ChangeNotifier{
   }
 
   Future<void> loadEvents() async{
-    events = await eventController.getEvents();
-    backUpEvents = events;
-    recommendedEvents = await eventController.getRecommendedEvents();
+    // events = await eventController.getEvents();
+    // backUpEvents = events;
+    // recommendedEvents = await eventController.getRecommendedEvents();
     favoriteEvents =await eventController.getFavorites();
     notifyListeners();
   }
