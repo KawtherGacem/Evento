@@ -1,4 +1,8 @@
+// import 'dart:html';
 import 'dart:io';
+import 'package:evetoapp/eventPage.dart';
+import 'package:evetoapp/models/users/User.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,17 +13,23 @@ import 'controllers/loginController.dart';
 
 
 
-class Editeprofile extends StatefulWidget {
+class EditeProfile extends StatefulWidget {
+  const EditeProfile({Key? key, required UserModel user})
+      : _user = user,
+        super(key: key);
+
+  final UserModel _user;
   @override
-  _EditeprofileState createState() => _EditeprofileState();
+  _EditeProfileState createState() => _EditeProfileState();
 }
-class _EditeprofileState extends State<Editeprofile> {
+class _EditeProfileState extends State<EditeProfile> {
+  late UserModel user;
   File? pickedImage;
   bool showPassword = false;
   bool loading = false;
   var _image;
   var photoURL;
-  LoginController photoajouter= LoginController();
+
 
   Widget imagePickerOption() {
     return Container(
@@ -86,6 +96,7 @@ class _EditeprofileState extends State<Editeprofile> {
       final tempImage = File(photo.path);
       setState(() {
         pickedImage = tempImage;
+        _image = tempImage;
       });
 
       Get.back();
@@ -96,8 +107,45 @@ class _EditeprofileState extends State<Editeprofile> {
 
 
 
+
+
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+
+  Future uploadPic(BuildContext context) async {
+    Reference ref = FirebaseStorage.instance.ref();
+    TaskSnapshot addImg = await ref
+        .child("image/" + DateTime.now().toString())
+        .putFile(_image!);
+    if (addImg.state == TaskState.success) {
+      print("added to Firebase Storage");
+    }
+    var DUrl = addImg.ref.getDownloadURL();
+    await DUrl.then((result) {
+      setState(() {
+        if (result is String) {
+          photoURL = result;
+        }
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    user = widget._user;
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    fullNameController.text=user.fullName!;
+    userNameController.text=user.userName!;
+    emailController.text=user.email!;
+    // fullName.text=user.fullName!;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
@@ -109,10 +157,12 @@ class _EditeprofileState extends State<Editeprofile> {
               Icons.check,
               color: Colors.white,
             ),
-            onPressed: (
-                ) {
+            onPressed: () async {
+              await uploadPic(context);
+              updateUser(fullNameController.text,userNameController.text,emailController.text,photoURL);
             },
           ),
+
         ],
       ),
       body: Container(
@@ -136,8 +186,6 @@ class _EditeprofileState extends State<Editeprofile> {
                     Container(
                       width: 150,
                       height: 150,
-
-
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.deepPurpleAccent, width: 4),
                         borderRadius: const BorderRadius.all(
@@ -152,8 +200,8 @@ class _EditeprofileState extends State<Editeprofile> {
                           height: 170,
                           fit: BoxFit.cover,
                         )
-                            : Image.asset(
-                          'assets/avatar.JPG',
+                            : Image.network(
+                          user.photoURL!,
                           width: 170,
                           height: 170,
                           fit: BoxFit.cover,
@@ -185,8 +233,6 @@ class _EditeprofileState extends State<Editeprofile> {
                                 setState(() {
                                 });
                               }
-                              await uploadPic(context);
-                              photoajouter.addPhoto(photoURL.toString());
                             },
 
                             icon: const Icon(
@@ -202,10 +248,58 @@ class _EditeprofileState extends State<Editeprofile> {
               SizedBox(
                 height: 35,
               ),
-              buildTextField("Full Name","torki meriem amira" , false),
-              buildTextField("E-mail", "torkimeriemamira@gmail.com", false),
-              buildTextField("Password", "********", true),
-              buildTextField("Location", "Algeria", false),
+              buildTextField("Nom Complet", false,fullNameController),
+              buildTextField("Nom d'utilisateur", false,userNameController),
+              buildTextField("E-mail", false,emailController),
+            TextFormField(
+              autofocus: false,
+              controller: oldPassword,
+              obscureText: true,
+              validator: (value) {
+                  RegExp regex = new RegExp(r'^.{6,}$');
+                  if (value!.isEmpty) {
+                  return ("Password is required");
+                  }
+                  if (!regex.hasMatch(value)) {
+                  return ("Enter Valid Password(Min. 6 Character)");
+                  }
+                  },
+                onSaved: (value) {
+                  oldPassword.text = value!;
+                },
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.vpn_key),
+                  contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                  hintText: "Password",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                )),
+
+              TextFormField(
+              autofocus: false,
+              controller: newPassword,
+              obscureText: true,
+              validator: (value) {
+                // if (confirmPasswordEditingController.text !=
+                //     passwordEditingController.text) {
+                //   return "Password don't match";
+                // }
+                // return null;
+              },
+              onSaved: (value) {
+                // confirmPasswordEditingController.text = value!;
+              },
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.vpn_key),
+                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                hintText: "Confirm Password",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+        )),
               SizedBox(
                 height: 35,
               ),
@@ -217,11 +311,17 @@ class _EditeprofileState extends State<Editeprofile> {
   }
 
   Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
+      String labelText, bool isPasswordTextField,TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
+        controller: controller,
         obscureText: isPasswordTextField ? showPassword : false,
+        keyboardType: TextInputType.name,
+        onSubmitted: (value) {
+          controller.text = value;
+        },
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
             suffixIcon: isPasswordTextField
                 ? IconButton(
@@ -229,17 +329,16 @@ class _EditeprofileState extends State<Editeprofile> {
                 setState(() {
                   showPassword = !showPassword;
                 });
-              },
-              icon: Icon(
-                Icons.remove_red_eye,
-                color: Colors.deepPurpleAccent,
-              ),
-            )
+                  },
+                  icon: Icon(
+                    Icons.remove_red_eye,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                 )
                 : null,
             contentPadding: EdgeInsets.only(bottom: 3),
             labelText: labelText,
             floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
             hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -251,19 +350,14 @@ class _EditeprofileState extends State<Editeprofile> {
 
 
 
-  Future uploadPic(BuildContext context) async {
-    Reference ref = FirebaseStorage.instance.ref();
-    TaskSnapshot addImg =
-    await ref.child("image/"+DateTime.now().toString()).putFile(_image!);
-    if (addImg.state == TaskState.success) {
-      print("added to Firebase Storage");
-    }
-    var DUrl = addImg.ref.getDownloadURL();
-    await DUrl.then((result)  {
-      setState(() {
-        if (result is String){
-          photoURL=result;
-        }
-      });
-    });}
+
+
+  Future<void> updateUser(String fullName,String userName, String email,String photoURL) async {
+    User user1 = FirebaseAuth.instance.currentUser!;
+    await user1.updateDisplayName(userName);
+    await user1.updatePhotoURL(photoURL);
+    await user1.updateEmail(email);
+
+
+  }
 }

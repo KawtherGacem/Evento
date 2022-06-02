@@ -61,6 +61,7 @@ dependencies:
   google_maps_flutter: 2.1.5
   like_button: ^2.0.4
   path_provider: ^2.0.10
+  url_launcher: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +98,9 @@ flutter:
      - assets/google.png
      - assets/avatar.JPG
      - assets/logotwil.png
+     - assets/ingehack.jpg
+     - assets/iwal.jpg
+     - assets/avatar.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

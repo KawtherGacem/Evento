@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evetoapp/dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'homePage.dart';
 import 'models/users/User.dart';
@@ -18,7 +22,8 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>(debugLabel: 'SignUpPageKey');
   final _auth = FirebaseAuth.instance;
   String? errorMessage;
-
+  var _image;
+  var DownLoadUrl;
 
   final fullNameEditingController = new TextEditingController();
   final userNameEditingController = new TextEditingController();
@@ -50,7 +55,7 @@ class _SignUpState extends State<SignUp> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Full Name",
+          hintText: "Nom Complet",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -63,7 +68,7 @@ class _SignUpState extends State<SignUp> {
         keyboardType: TextInputType.name,
         validator: (value) {
           if (value!.isEmpty) {
-            return ("Username cannot be Empty");
+            return ("Username ne doit pas etre vide");
           }
           return null;
         },
@@ -74,7 +79,7 @@ class _SignUpState extends State<SignUp> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Username",
+          hintText: "Nom d'utilisateur",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -130,7 +135,7 @@ class _SignUpState extends State<SignUp> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.vpn_key),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Password",
+          hintText: "Mot de passe",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -155,11 +160,31 @@ class _SignUpState extends State<SignUp> {
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.vpn_key),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Confirm Password",
+          hintText: "Confirmer mot de passe",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ));
+
+    Future uploadPic(BuildContext context) async {
+      Reference ref = FirebaseStorage.instance.ref();
+      TaskSnapshot addImg = await ref
+          .child("image/" + DateTime.now().toString())
+          .putFile(_image!);
+      if (addImg.state == TaskState.success) {
+        print("added to Firebase Storage");
+      }
+      var DUrl = addImg.ref.getDownloadURL();
+      await DUrl.then((result) {
+        setState(() {
+          if (result is String) {
+            DownLoadUrl = result;
+            print(DownLoadUrl);
+
+          }
+        });
+      });
+    }
 
     //signup button
     final signUpButton = Material(
@@ -169,16 +194,26 @@ class _SignUpState extends State<SignUp> {
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
-          onPressed: () {
+          onPressed: () async {
+            await uploadPic(context);
             signUp(emailEditingController.text, passwordEditingController.text);
           },
           child: Text(
-            "SignUp",
+            "Inscrire",
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           )),
     );
+
+    Future getImage() async {
+      var image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      setState(() {
+        _image = File(image!.path);
+      });
+    }
+
+
     return Scaffold(
        // IconButton(
        //    icon: Icon(Icons.arrow_back, color: Color(0xFF513ADA)),
@@ -210,10 +245,72 @@ class _SignUpState extends State<SignUp> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(top:20),
-                          height: 120,
+                          margin: EdgeInsets.only(top:10),
+                          height: 60,
+                          width: 250,
                           child: Image.asset("assets/logotwil.png",
                             fit: BoxFit.contain,),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Stack(
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xFF513ADA), width: 4),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(100),
+                                ),
+                              ),
+                              child: ClipOval(
+                                child:  _image != null
+                                    ? Image.file(
+                                  _image!,
+                                  width: 170,
+                                  height: 170,
+                                  fit: BoxFit.cover,
+                                )
+                                    : Image.asset(
+                                 "assets/avatar.png",
+                                  width: 170,
+                                  height: 170,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 4,
+                                      color: Color(0xFF513ADA),
+                                    ),
+                                    color: Color(0xFF513ADA),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 0.0),
+                                    child: IconButton(
+                                      onPressed: () async{
+                                        getImage();
+                                      },
+
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ))
+                          ],
                         ),
                         Container(
                             margin: EdgeInsets.only(top:20),
@@ -282,6 +379,7 @@ class _SignUpState extends State<SignUp> {
   postDetailsToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
+    user!.updatePhotoURL(DownLoadUrl);
     await firebaseFirestore
         .collection("users")
         .doc(user?.uid)
@@ -290,7 +388,7 @@ class _SignUpState extends State<SignUp> {
         "fullName" : fullNameEditingController.text,
         "userName" : userNameEditingController.text,
         "email":user?.email,
-        "photo":user?.photoURL,
+        "photo":DownLoadUrl,
         "themes" : ["Informatique","Biologie","Mathématiques","Physique","Chimie","Économie",
           "Électronique","Histoire-géographie","Géopolitique","Sciences politiques","littérature","philosophie",
           "Art","Music","Médicine","Environnement"]
@@ -301,7 +399,7 @@ class _SignUpState extends State<SignUp> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => Dashboard(user: user!,)),
+        MaterialPageRoute(builder: (context) => Dashboard(user: user,)),
             (route) => false);
   }
 }

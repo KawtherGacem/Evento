@@ -2,13 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:evetoapp/addEvent.dart';
 import 'package:evetoapp/homePage.dart';
-import 'package:evetoapp/models/users/User.dart';
-import 'package:evetoapp/providers/eventProvider.dart';
+import 'package:evetoapp/profilescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
-
 import 'controllers/loginController.dart';
 import 'eventPage.dart';
 import 'favoritesPage.dart';
@@ -43,20 +40,25 @@ class _DashboardState extends State<Dashboard> {
       "hash":"owdko",
       "geopoint":eventLocation
     };
-    event= new Event("id", "Ingehack", "The biggest event of the year, the long awaited INGEHACK is finally here.In an upgraded version, Ingehack is coming back this year in its third edition.Get ready because history is about to be made.️ details will be communicated soon.",
-        "uid", "organizerPhoto", "Ingeniums", "https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcorporate-event&psig=AOvVaw3UV5IKFmpD21FO6O0ZevyU&ust=1654127211029000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJjpkJn2ivgCFQAAAAAdAAAAABAD", ["Informatique","Competetion"], Timestamp.now(), Timestamp.now(), map, "youtube.com", []);
+    event= Event("id", "Ingehack", "The biggest event of the year, the long awaited INGEHACK is finally here.In an upgraded version, Ingehack is coming back this year in its third edition.Get ready because history is about to be made.️ details will be communicated soon.",
+        "uid", "organizerPhoto", "Ingeniums", "https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fcorporate-event&psig=AOvVaw3UV5IKFmpD21FO6O0ZevyU&ust=1654127211029000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJjpkJn2ivgCFQAAAAAdAAAAABAD", ["Informatique","Competetion"],
+        Timestamp.now(), Timestamp.now(), map, "https://docs.google.com/forms/d/e/1FAIpQLSdFPyVFQ65NaF1REfGWIARCP07oRr6NDEBkzG-ktnmgo9NIow/viewform?usp=sf_link", []);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final EventProvider = Provider.of<eventProvider>(context);
+    // final EventProvider = Provider.of<eventProvider>(context,listen: false);
     // EventProvider.loadEvents();
-
+    // EventController eventController = EventController();
+    // eventController.getEvents();
     List<Widget> listWidgets = [
-      HomePage(EventProvider.events),
-      EventPage(event: event,),
-      FavoutitesPage(EventProvider.events),
+      // ProfileScreen(uid: _user.uid),
+      HomePage(),
+      // EventPage(event: event,isRecommended: false),
+      addEvent(),
+      FavoutitesPage(),
     ];
 
     return Scaffold(
@@ -112,6 +114,8 @@ class _DashboardState extends State<Dashboard> {
       ),
     );
   }
+
+
 
 
 }

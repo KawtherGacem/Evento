@@ -126,13 +126,4 @@ class LoginController with ChangeNotifier{
 
     return firebaseApp;
   }
-  final firestoreInstance = FirebaseFirestore.instance;
-  void addPhoto(String photoURL) {
-    firestoreInstance.collection("users").add(
-        {
-          "organizerPhoto":photoURL,
-        }).then((value){
-      print(value.id);
-    });
-  }
 }

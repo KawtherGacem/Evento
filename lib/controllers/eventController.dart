@@ -1,16 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evetoapp/models/Event.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/users/User.dart';
 
 class EventController{
   List<Event> events =[];
+  List<Event> recommended =[];
+  List<Event> favorites =[];
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Future<void> loadEvents() async{
+    events = await getEvents();
+    recommended = await getRecommendedEvents();
+    favorites= await getFavorites();
+    print(favorites[0].title!+"81268176");
+  }
 
   Future<List<Event>> getEvents() async{
     return firestore.collection("events").where("endingDate",isGreaterThan: Timestamp.fromDate(DateTime.now())).get().then((result) {
@@ -23,7 +30,33 @@ class EventController{
       return events;
     });
 
+
   }
+  Future<List<Event>> getFavorites() async {
+    // List<Event> favoritEvents =[];
+    String uid =FirebaseAuth.instance.currentUser!.uid;
+    // favoritEvents = events
+    //     .where((event) => event.likes.contains(uid))
+    //     .toList();
+    // print(favoritEvents[0].title);
+
+    Query query = firestore.collection("events").where("likes",arrayContainsAny: [uid]);
+   return query.where("endingDate",isGreaterThan: Timestamp.fromDate(DateTime.now())).get().then((result) {
+      List<Event> events =[];
+      var event;
+      for( event in result.docs){
+        favorites.add(Event.fromJson(event.data()));
+      }
+      print(favorites[0].title);
+
+      return favorites;
+    });
+  }
+
+  void getRec() async{
+    recommended= await getRecommendedEvents();
+  }
+
   Future<List<Event>> getRecommendedEvents() async{
     String uid =FirebaseAuth.instance.currentUser!.uid;
     List<dynamic> userThemes = await GetUserThemes(uid);
@@ -44,26 +77,10 @@ class EventController{
       return recommendeEvents;
   }
 
-  Future<List<Event>> getFavorites() async {
-    List<Event> favoritEvents =[];
-    String uid =FirebaseAuth.instance.currentUser!.uid;
+  // getFav() async{
+  //   favorites= await getFavorites();
+  // }
 
-    favoritEvents = events
-        .where((event) => event.likes.contains(uid))
-        .toList();
-
-    // Query query = firestore.collection("events").where("likes",arrayContainsAny: [uid]);
-    // return query.where("endingDate",isGreaterThan: Timestamp.fromDate(DateTime.now())).get().then((result) {
-    //   List<Event> events =[];
-    //   var event;
-    //   for( event in result.docs){
-    //     events.add(Event.fromJson(event.data()));
-    //   }
-    //   print(events[0].title);
-    //   _deleteCacheDir();
-
-      return favoritEvents;
-  }
 
   Future<List<dynamic>> GetUserThemes(String uid) async {
     UserModel user=UserModel();

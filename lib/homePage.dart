@@ -26,10 +26,7 @@ import 'models/Event.dart';
 import 'myOwnEvent.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(List<Event> events, {Key? key}) :
-      _events =events,
-        super(key: key);
-  final List<Event> _events;
+  const HomePage({Key? key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -54,10 +51,12 @@ class _HomePageState extends State<HomePage> {
   List<String> selectedThemesList = [];
 
   bool isFilter = false;
-
+  EventController eventController = EventController();
   @override
+
   void initState() {
-    Events =widget._events;
+    eventController.loadEvents();
+    Events = eventController.events;
     super.initState();
     getUserLocation();
     controller.addListener(() {
@@ -107,16 +106,15 @@ class _HomePageState extends State<HomePage> {
       "Cuisine"
     ];
 
-    final EventProvider = Provider.of<eventProvider>(context);
     final Size size = MediaQuery.of(context).size;
 
     void searchEvent(String query) {
       if (query.isEmpty) {
         setState((){
-          EventProvider.events=Events;
+         Events=eventController.events;
         });
       } else {
-        EventProvider.events = EventProvider.events
+        Events = eventController.events
             .where((event) =>
                 event.title!.toLowerCase().contains(query.toLowerCase()))
             .toList();
@@ -128,14 +126,14 @@ class _HomePageState extends State<HomePage> {
       if (selectedCategories.isEmpty) {
         Fluttertoast.showToast(msg: "aucun filtre n'été selectionné");
         setState((){
-          EventProvider.events=Events;
+          Events=eventController.events;
         });
       } else {
-        EventProvider.events = EventProvider.events
+        Events = eventController.events
             .where((event) => selectedCategories
                 .every((element) => event.themes.contains(element)))
             .toList();
-        print(EventProvider.events);
+        print(Events[0].title);
       }
     }
 
@@ -249,8 +247,8 @@ class _HomePageState extends State<HomePage> {
           semanticsLabel: "rafraîchir",
           onRefresh: () async {
 
-            await EventProvider.loadEvents();
-             Events=EventProvider.events;
+            await eventController.loadEvents();
+             Events=eventController.events;
           },
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
@@ -287,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    EventProvider.events=Events;
+                                    Events=eventController.events;
                                   });
                                   FocusScope.of(context).unfocus();
                                   searchIsClicked = false;
@@ -317,7 +315,7 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.only(right: 5),
                               onPressed: () {
                                 setState(() {
-                                  EventProvider.events=Events;
+                                  Events=eventController.events;
 
                                 });
                                 selectedThemesList.clear();
@@ -395,7 +393,7 @@ class _HomePageState extends State<HomePage> {
                                                     alignment:
                                                         Alignment.bottomLeft,
                                                     child: Text(
-                                                      "Categories",
+                                                      "Themes",
                                                       style: TextStyle(
                                                           fontSize: 17),
                                                     ),
@@ -407,14 +405,14 @@ class _HomePageState extends State<HomePage> {
                                                     height: 300,
                                                     child:
                                                         SingleChildScrollView(
-                                                      child: FilterChips(
-                                                        categories:
-                                                            categoryList,
-                                                        onSelectionChanged:
-                                                            (selectedList) {
-                                                          setState(() {
-                                                            selectedThemesList =
-                                                                selectedList;
+                                                        child: FilterChips(
+                                                          categories:
+                                                              themesList,
+                                                          onSelectionChanged:
+                                                              (selectedList) {
+                                                            setState(() {
+                                                              selectedThemesList =
+                                                                  selectedList;
                                                           });
                                                         },
                                                       ),
@@ -549,7 +547,7 @@ class _HomePageState extends State<HomePage> {
                               physics: BouncingScrollPhysics(),
                               clipBehavior: Clip.antiAliasWithSaveLayer,
                               scrollDirection: Axis.horizontal,
-                              itemCount: EventProvider.recommendedEvents.length,
+                              itemCount: eventController.recommended.length,
                               itemBuilder: (context, index) {
                                 return FittedBox(
                                   fit: BoxFit.fitWidth,
@@ -595,8 +593,8 @@ class _HomePageState extends State<HomePage> {
                                                           width: 170,
                                                           child: Image(
                                                             image: Image.network(
-                                                                    EventProvider
-                                                                        .recommendedEvents[
+                                                                    eventController
+                                                                        .recommended[
                                                                             index]
                                                                         .photoUrl!)
                                                                 .image,
@@ -721,8 +719,8 @@ class _HomePageState extends State<HomePage> {
                                             )),
                                         onTap: () {
                                           Get.to(EventPage(
-                                              event: EventProvider
-                                                  .recommendedEvents[index]));
+                                              event: eventController
+                                                  .recommended[index],isRecommended: true));
                                         },
                                       )),
                                 );
@@ -747,7 +745,7 @@ class _HomePageState extends State<HomePage> {
                       controller: controller,
                       physics: BouncingScrollPhysics(),
                       padding: EdgeInsets.only(top: 0),
-                      itemCount: EventProvider.events.length,
+                      itemCount: Events.length,
                       itemBuilder: (context, index) {
                         return Card(
                             shape: RoundedRectangleBorder(
@@ -777,8 +775,7 @@ class _HomePageState extends State<HomePage> {
                                               width: 372,
                                               child: Image(
                                                 image: Image.network(
-                                                        EventProvider
-                                                            .events[index]
+                                                            Events[index]
                                                             .photoUrl!)
                                                     .image,
                                                 fit: BoxFit.cover,
@@ -836,8 +833,7 @@ class _HomePageState extends State<HomePage> {
                                             left: 13,
                                             right: 20,
                                             child: Text(
-                                              EventProvider
-                                                  .events[index].title!,
+                                              Events[index].title!,
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 17,
@@ -857,36 +853,34 @@ class _HomePageState extends State<HomePage> {
                                                   child: LikeButton(
                                                     animationDuration: Duration(
                                                         milliseconds: 2000),
-                                                    isLiked: EventProvider
-                                                        .events[index].likes
+                                                    isLiked: Events[index].likes
                                                         .contains(FirebaseAuth
                                                             .instance
                                                             .currentUser!
                                                             .uid),
                                                     onTap: (isLiked) async {
+
+                                                      await addToFavorites(
+                                                        Events[index].id, isLiked);
+
                                                       if (isLiked) {
-                                                        EventProvider
-                                                            .events[index].likes
+                                                        eventController.events[index].likes
                                                             .remove(FirebaseAuth
                                                             .instance
                                                             .currentUser!
                                                             .uid);
                                                       }else{
-                                                        EventProvider
-                                                            .events[index].likes
+                                                        eventController.events[index].likes
                                                             .add(FirebaseAuth
                                                             .instance
                                                             .currentUser!
                                                             .uid);
-                                                        setState((){
-
-                                                        });
-                                                        await addToFavorites(
-                                                                    EventProvider
-                                                                        .events[index]
-                                                                        .id,
-                                                                    isLiked);
                                                       }
+                                                      print(eventController.events[index].likes);
+                                                      setState((){
+                                                        Events=eventController.events;
+                                                      });
+
                                                       // final success =
                                                       //     await addToFavorites(
                                                       //         EventProvider
@@ -936,7 +930,7 @@ class _HomePageState extends State<HomePage> {
                                                             const EdgeInsets
                                                                 .only(top: 3.0),
                                                         child: Text(
-                                                          DateFormat('MM/dd/yyyy').format(EventProvider.events[index].startingDate!.toDate()),
+                                                          DateFormat('MM/dd/yyyy').format(Events[index].startingDate!.toDate()),
                                                           style: TextStyle(
                                                               color: Color(
                                                                   0x9B000000),fontSize: 14),
@@ -962,8 +956,7 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                       FutureBuilder(
                                                           future: getLocation(
-                                                              EventProvider
-                                                                  .events[index]
+                                                             Events[index]
                                                                   .eventLocation!),
                                                           initialData:
                                                               "Loading location..",
@@ -1001,8 +994,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     DateFormat('Hm').format(
-                                                        EventProvider
-                                                            .events[index]
+                                                        Events[index]
                                                             .startingDate!
                                                             .toDate()),
                                                       style: TextStyle(
@@ -1019,7 +1011,7 @@ class _HomePageState extends State<HomePage> {
                                   )),
                               onTap: () {
                                 Get.to(EventPage(
-                                    event: EventProvider.events[index]));
+                                    event: Events[index],isRecommended: false));
                               },
                             )
                             //   } else if (snapshot.hasError) {

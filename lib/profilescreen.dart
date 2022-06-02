@@ -1,9 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:evetoapp/controllers/loginController.dart';
 import 'package:evetoapp/controllers/userController.dart';
 import 'package:evetoapp/editeProfile.dart';
 import 'package:evetoapp/models/users/User.dart';
+import 'package:evetoapp/signUp.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import 'eventPage.dart';
+import 'models/Event.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required String uid})
@@ -20,6 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   UserController userController = UserController();
   UserModel user = UserModel();
   bool? isUserProfile;
+
+  Map<String, dynamic>? map;
   @override
   initState() {
     getData().then((value) => user = value);
@@ -55,6 +64,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
         iconTheme: IconThemeData(color: Colors.black),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.check,
+              color: Colors.blue,
+            ),
+            onPressed: () async {
+              LoginController.signOut(context: context);
+              Get.to(SignUp());
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [
@@ -66,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Color(0xff74EDED),
-                    backgroundImage: Image.asset("assets/avatar.JPG").image,
+                    backgroundImage: Image.network(user.photoURL!).image,
                   ),
                   Expanded(
                     flex: 1,
@@ -108,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Editeprofile()),
+                                    builder: (context) => EditeProfile(user: user)),
                               );
                             },
                           ),
