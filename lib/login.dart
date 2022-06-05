@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
           fillColor: Colors.white54,
           prefixIcon: const Icon(Icons.vpn_key_rounded,color:  Color(0xFF513ADA)),
           contentPadding: EdgeInsets.symmetric(horizontal:20.w,vertical:30.h),
-          hintText: "Password",
+          hintText: "Mot de passe",
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: const BorderSide(color: Color(0xFF513ADA)),
@@ -98,7 +98,7 @@ class _LoginState extends State<Login> {
         onPressed: (){
         login(emailController.text, passwordController.text);
         },
-        child: Text("Login",textAlign: TextAlign.center,style: TextStyle(
+        child: Text("Connecter",textAlign: TextAlign.center,style: TextStyle(
             fontSize:55.sp ,color: const Color(0xFFFFFFFF),fontWeight: FontWeight.bold,
         )),
       ),
@@ -159,7 +159,7 @@ class _LoginState extends State<Login> {
                                           mainAxisAlignment: MainAxisAlignment
                                               .center,
                                           children: <Widget>[
-                                            Text("Don't have an account? ",
+                                            Text("Vous avez pas un compte? ",
                                               style: TextStyle(
                                                   fontSize: 40.sp
                                               ),),
@@ -172,7 +172,7 @@ class _LoginState extends State<Login> {
                                                             const SignUp()));
                                               },
                                               child: Text(
-                                                "SignUp",
+                                                "Inscrivez-vous",
                                                 style: TextStyle(
                                                     color: Colors.grey,
                                                     fontWeight: FontWeight.bold,
@@ -192,7 +192,7 @@ class _LoginState extends State<Login> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Or continue with",
+                                  "ou continuer avec",
                                   style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold,
@@ -223,19 +223,6 @@ class _LoginState extends State<Login> {
                                             // }
                                             },
                                         ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 40.h),
-                                        padding: EdgeInsets.all(3.h),
-                                        height: 170.h,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                50)
-                                        ),
-                                        child: Image.asset("assets/facebook.png",
-                                          fit: BoxFit.contain,),
                                       ),
                                     ],
                                   ),

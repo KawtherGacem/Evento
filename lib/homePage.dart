@@ -203,8 +203,9 @@ class _HomePageState extends State<HomePage> {
                   size: 30,
                 ),
                 onTap: () async {
+                  Get.offAll(Login());
                   await LoginController.signOut(context: context);
-                  Get.to(Login());
+
                 },
               ),
             ],

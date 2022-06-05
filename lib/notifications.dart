@@ -41,11 +41,11 @@ class _NotificationsState extends State<Notifications> {
         centerTitle: true,
         title: Container(
             alignment: Alignment.center,
-            width: 125,
+            width: 150,
             // margin: EdgeInsets.only(left: 10),
             child: Text("Notifications",
               style: const TextStyle(color: Color(0xFF50519E),
-                  fontSize: 35,fontWeight: FontWeight.bold
+                  fontSize: 25,fontWeight: FontWeight.bold
               ),)
           // Image.asset("assets/logotwil.png"),
         ),
@@ -56,12 +56,16 @@ class _NotificationsState extends State<Notifications> {
         itemCount: events.length,
 
           itemBuilder: (BuildContext context,index){
-            return(ListTile(
-              title: Text(
-                events[index].title!
-              ),
+            return Column(
+              children: [
+                (ListTile(
+                  title: Text("il reste "+events[index].startingDate!.toDate().difference(DateTime.now()).inDays.toString()+
+                   " jours a l'événement"+ events[index].title!+" ne le ratez pas."              ),
 
-            ));
+                )),
+                Divider()
+              ],
+            );
 
           }),
     );

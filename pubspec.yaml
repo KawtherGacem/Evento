@@ -62,6 +62,7 @@ dependencies:
   like_button: ^2.0.4
   path_provider: ^2.0.10
   url_launcher: ^6.1.2
+  introduction_screen: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -101,6 +102,8 @@ flutter:
      - assets/ingehack.jpg
      - assets/iwal.jpg
      - assets/avatar.png
+     - assets/skip1.png
+     - assets/skip2.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

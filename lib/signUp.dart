@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:evetoapp/dashboard.dart';
+import 'package:evetoapp/selectPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -399,7 +400,7 @@ class _SignUpState extends State<SignUp> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => Dashboard(user: user,)),
+        MaterialPageRoute(builder: (context) => SelectPage(user: user,)),
             (route) => false);
   }
 }
